@@ -140,6 +140,41 @@ footer p{margin:0;max-width:75ch}
 .finding p{margin:0;font-size:.84rem;color:var(--muted)}
 td.loc{font-weight:600}
 tr.gstart td{border-top:2px solid var(--line)}
+.hero{padding-block:8px 4px}
+.hero h2{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700}
+.hero p{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.sec-t{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px}
+.sec-t h3{font-size:1.05rem;font-weight:600}
+.sec-t span{font-size:.82rem;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px}
+a.tile{display:flex;flex-direction:column;gap:16px;padding:22px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg);text-decoration:none;position:relative;overflow:hidden}
+a.tile:hover{border-color:var(--accent);box-shadow:0 6px 20px rgba(20,40,60,.08)}
+a.tile .ico{width:48px;height:48px;border-radius:10px;background:var(--accent-soft);display:grid;place-items:center;flex:none}
+a.tile .top{display:flex;gap:14px;align-items:center}
+a.tile h4{margin:0;font-family:var(--f-disp);font-size:1.3rem;font-weight:700}
+a.tile .d{font-size:.84rem;color:var(--muted)}
+a.tile .stat{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--line)}
+a.tile .stat .k{font-size:.76rem;color:var(--muted)}
+a.tile .stat .v{font-family:var(--f-mono);font-size:2rem;font-weight:600;line-height:1.1}
+a.tile .go{font-weight:600;color:var(--accent);font-size:.9rem;white-space:nowrap}
+a.tile:hover .go{text-decoration:underline}
+.soon{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:10px}
+.soon div{padding:12px 14px;border:1px dashed var(--line);border-radius:8px;font-size:.86rem;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.soon div b{color:var(--fg);font-weight:500}
+.soon div small{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+@media (prefers-reduced-motion:no-preference){a.tile{transition:border-color .15s,box-shadow .15s}}
+.agroup{display:flex;flex-direction:column;gap:10px}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:10px}
+a.at{display:flex;flex-direction:column;gap:10px;justify-content:space-between;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg);text-decoration:none;min-height:104px}
+a.at:hover{border-color:var(--accent)}
+a.at b{font-weight:600;font-size:.95rem;line-height:1.35}
+a.at .ft{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.78rem;color:var(--muted)}
+a.at .ft .v{font-family:var(--f-mono);font-weight:600;font-size:1.05rem}
+a.at.live{border-color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px}
+.steps div{background:var(--sunk);border-radius:8px;padding:12px 14px;font-size:.86rem}
+.steps div b{display:block;margin-bottom:2px}
+@media (prefers-reduced-motion:no-preference){a.at{transition:border-color .15s}}
 </style>
 
 <div class="wrap">
@@ -226,7 +261,7 @@ function renderSensors(){
  const ds=done();if(UI.month==null)UI.month=ds[ds.length-1]||nextDue()||1;
  const m=UI.month;const d=DATA[m];
  document.getElementById("app").innerHTML=`
- <nav class="crumbs"><a href="#">Master Plan</a> / Instruments &amp; analyzers / <span style="color:var(--fg)">Critical sensor check</span></nav>
+ <nav class="crumbs"><a href="#">← Home</a> / Instruments &amp; analyzers / <span style="color:var(--fg)">Critical sensor check</span></nav>
  <section class="panel">
   <div class="ph"><div><span class="eyebrow">2026 · monthly</span><h2>Critical sensor check</h2><p class="sub">Select a month. Colors show the month's accuracy: green ≥ 98%, amber 95–98%, red below 95%.</p></div></div>
   ${monthStrip()}
@@ -379,7 +414,7 @@ function renderGas(){
  if(GUI.round==null||!GDATA[GUI.round])GUI.round=GDATA.length-1;
  const F=gfindings();
  document.getElementById("app").innerHTML=`
- <nav class="crumbs"><a href="#">Master Plan</a> / Instruments &amp; analyzers / <span style="color:var(--fg)">Gas analyzers cross check</span></nav>
+ <nav class="crumbs"><a href="#">← Home</a> / Instruments &amp; analyzers / <span style="color:var(--fg)">Gas analyzers cross check</span></nav>
  <section class="panel">
   <div class="ph"><div><span class="eyebrow">5 analyzers · 12 readings per round</span><h2>Gas analyzers cross check</h2><p class="sub">Reliability = share of readings within tolerance. Green ≥ 85%, amber 60–85%, red below 60%. Dates in the imported sheet are from 2024.</p></div></div>
   ${gStrip()}
@@ -470,38 +505,70 @@ function bindGas(){
 }
 
 /* ===== HOME ===== */
+const DESC={
+ "Kiln audit":"Periodic audit of kiln operating conditions and performance.",
+ "Kiln shutdown inspection":"Inspection findings recorded during each kiln shutdown (KSD).",
+ "Kiln shell scanner":"Kiln shell temperature profile from the shell scanner, to track coating and hot spots.",
+ "Kiln EP dust drop test & kiln feed bin losses":"Dust drop-out at the kiln electrostatic precipitator and material losses at the kiln feed bin.",
+ "P.H & kiln, cooler 1st level inspection":"Routine first-level inspection of the preheater, kiln and clinker cooler.",
+ "P.H false air measurements":"False air ingress measured across the preheater stages.",
+ "Burner audit":"Audit of burner operating parameters.",
+ "Burner flame setting & inspection":"Burner flame setting checks and inspection results.",
+ "Bypass % – flow measurement":"Bypass flow measurement and bypass percentage.",
+ "Monitor volatiles input and output":"Input and output balance of volatiles through the kiln system.",
+ "Clinker cooler fans flow measurements":"Measured air flow of each clinker cooler fan.",
+ "Pyro line major fans audit":"Audit of the main fans on the pyro line.",
+ "Critical sensor check":"Monthly cross check of 12 kiln-line sensors: field measurement against the CCR reading.",
+ "Gas analyzers cross check":"Cross check of the five process gas analyzers (O₂, CO, NOx) against a portable analyzer.",
+ "RM audit":"Raw mill audit.",
+ "CM master plan activities":"Cement mill activities in the master plan.",
+ "Bag filters measurements":"Measurements on the plant bag filters.",
+ "Compressors":"Compressor performance and consumption records.",
+ "Energy consumption":"Plant energy consumption tracking.",
+ "RMs & kiln reports":"Periodic raw mill and kiln reports."};
+const LIVE={"Critical sensor check":"#sensors","Gas analyzers cross check":"#gas"};
+const slug=t=>t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const ALL=[];PLAN.forEach(g=>g.items.forEach(it=>ALL.push({name:it,g:g.g,slug:slug(it)})));
+function liveStat(name){
+ if(name==="Critical sensor check"){const ds=done();const l=ds[ds.length-1];if(!l)return {v:"—",c:"na",k:"No readings"};const s=summary(DATA[l].v);return {v:pct(s.acc),c:accCls(s.acc),k:"Accuracy · "+MS[l-1]}}
+ if(name==="Gas analyzers cross check"){const gl=GDATA[GDATA.length-1];const gs=gsum(gl);return {v:pct(gs.rel,0),c:relCls(gs.rel),k:"Reliability · "+gLabel(gl)}}}
 function renderHome(){
- const ds=done();const last=ds[ds.length-1];const s=last?summary(DATA[last].v):null;const sc=s?accCls(s.acc):"na";
- const gl=GDATA[GDATA.length-1];const gs=gsum(gl);const gc=relCls(gs.rel);const F=gfindings();
- const total=PLAN.reduce((a,g)=>a+g.items.length,0);
- const LIVE={"Critical sensor check":"#sensors","Gas analyzers cross check":"#gas"};
+ const hr=new Date().getHours();const greet=hr<12?"Good morning":hr<18?"Good afternoon":"Good evening";
  document.getElementById("app").innerHTML=`
- <div class="livegrid">
-  <section class="panel mod">
-   <div class="head"><div><span class="live">Live module</span><h2>Critical sensor check</h2><p class="sub">12 kiln-line sensors · field vs. CCR · monthly</p></div>
-    <div style="text-align:right"><div class="eyebrow">Accuracy · ${last?MS[last-1]:"—"}</div><div class="big" style="font-size:2.2rem;color:var(--${sc==="na"?"fg":sc})">${s?pct(s.acc):"—"}</div></div></div>
-   ${monthStrip()}
-   <div class="row" style="justify-content:space-between"><span class="sub" style="margin:0">${s?`${s.bad} sensors need calibration`:""}${nextDue()?` · <b style="color:var(--accent)">${MONTHS[nextDue()-1]} due</b>`:""}</span><a class="btn primary" href="#sensors">Open</a></div>
-  </section>
-  <section class="panel mod">
-   <div class="head"><div><span class="live">Live module</span><h2>Gas analyzers cross check</h2><p class="sub">5 analyzers · O₂, CO, NOx · ${GDATA.length} rounds</p></div>
-    <div style="text-align:right"><div class="eyebrow">Reliability · ${gLabel(gl)}</div><div class="big" style="font-size:2.2rem;color:var(--${gc==="na"?"fg":gc})">${pct(gs.rel,0)}</div></div></div>
-   ${gStrip().replace(/<button class="mo add"[\s\S]*?<\/button>/,"")}
-   <div class="row" style="justify-content:space-between"><span class="sub" style="margin:0">${gs.bad} readings out of tolerance · <b style="color:var(--bad)">${F.length} issues found</b></span><a class="btn primary" href="#gas">Open</a></div>
-  </section>
- </div>
+ <section class="hero"><span class="eyebrow">${new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</span>
+  <h2>${greet}</h2><p>${ALL.length} activities in the 2026 Master Plan. Select one to see its details and readings.</p></section>
+ <section class="agroup"><div class="sec-t"><h3>Active now</h3><span>${Object.keys(LIVE).length} activities with readings</span></div>
+  <div class="agrid">${Object.keys(LIVE).map(it=>{const st=liveStat(it);const a=ALL.find(x=>x.name===it);
+   return `<a class="at live" href="${LIVE[it]}"><span class="eyebrow">${a.g}</span><b style="font-size:1.05rem">${it}</b>
+    <span class="ft"><span>${st.k}</span><span class="v" style="color:var(--${st.c==="na"?"fg":st.c})">${st.v}</span></span></a>`}).join("")}</div></section>
+ ${PLAN.map(g=>({g:g.g,items:g.items.filter(it=>!LIVE[it])})).filter(g=>g.items.length).map(g=>`<section class="agroup"><div class="sec-t"><h3>${g.g}</h3><span>${g.items.length} activities</span></div>
+  <div class="agrid">${g.items.map(it=>{const L=LIVE[it];const st=L?liveStat(it):null;
+   return `<a class="at ${L?"live":""}" href="${L||"#act-"+slug(it)}"><b>${it}</b>
+    <span class="ft">${L?`<span>${st.k}</span><span class="v" style="color:var(--${st.c==="na"?"fg":st.c})">${st.v}</span>`:`<span>Not set up yet</span><span aria-hidden="true">→</span>`}</span></a>`}).join("")}</div></section>`).join("")}`;
+}
+function renderAct(sl){
+ const a=ALL.find(x=>x.slug===sl);if(!a){location.hash="";return}
+ if(LIVE[a.name]){location.hash=LIVE[a.name].slice(1);return}
+ document.getElementById("app").innerHTML=`
+ <nav class="crumbs"><a href="#">← Home</a> / ${a.g} / <span style="color:var(--fg)">${a.name}</span></nav>
  <section class="panel">
-  <div class="ph"><div><span class="eyebrow">2026 plan</span><h2>All activities</h2><p class="sub">${total} activities from the team's Master Plan folder. ${Object.keys(LIVE).length} are live; each of the others becomes a module the same way.</p></div></div>
-  <div class="groups">${PLAN.map(g=>`<div class="group"><h3>${g.g}<span>${g.items.length}</span></h3><div class="acts">
-   ${g.items.map(it=>LIVE[it]?`<a class="act" href="${LIVE[it]}"><span>${it}</span><span class="tag live">Live</span></a>`:`<div class="act"><span>${it}</span><span class="tag next">Next</span></div>`).join("")}
-  </div></div>`).join("")}</div>
- </section>`;
- document.querySelectorAll(".mo[data-m]").forEach(b=>b.addEventListener("click",()=>{UI.month=+b.dataset.m;UI.edit=false;location.hash="sensors"}));
- document.querySelectorAll(".mo[data-g]").forEach(b=>b.addEventListener("click",()=>{GUI.round=+b.dataset.g;GUI.form=null;GUI.pt=null;location.hash="gas"}));
+  <div class="ph"><div><span class="eyebrow">${a.g}</span><h2 style="font-size:1.6rem">${a.name}</h2><p class="sub" style="max-width:65ch">${DESC[a.name]||""}</p></div><span class="pill p-na">Not set up yet</span></div>
+  <div class="empty" style="border:1px dashed var(--line);border-radius:8px">
+   <h3>No readings for this activity yet</h3>
+   <p style="max-width:55ch;margin:0 auto">This activity is still kept in Excel. Once its sheet is added, it gets the same screens as the sensor and gas analyzer checks.</p></div>
+ </section>
+ <section class="panel"><div class="ph"><div><span class="eyebrow">What it will include</span><h2>Once the sheet is added</h2></div></div>
+  <div class="steps">
+   <div><b>Entry form</b>Record each round from any device on the plant network, with checks on every value.</div>
+   <div><b>Automatic calculations</b>The sheet's formulas run in the system, the same way every time.</div>
+   <div><b>History and trends</b>Every round kept in one place, with charts per item.</div>
+   <div><b>Findings</b>Repeated problems and suspicious entries flagged automatically.</div>
+  </div></section>
+ <div><a class="btn" href="#">← Back to all activities</a></div>`;
 }
 
 /* ===== routing ===== */
-function route(){if(location.hash==="#sensors")renderSensors();else if(location.hash==="#gas")renderGas();else renderHome()}
+function route(){const h=location.hash;if(h==="#sensors")renderSensors();else if(h==="#gas")renderGas();else if(h.startsWith("#act-"))renderAct(h.slice(5));else renderHome()}
 window.addEventListener("hashchange",()=>{route();window.scrollTo({top:0})});
 let rArm=false;const rb=document.getElementById("resetBtn");rb.addEventListener("click",()=>{if(!rArm){rArm=true;rb.textContent="Click again to reset";setTimeout(()=>{rArm=false;rb.textContent="Reset demo data"},4000);return}
  rArm=false;rb.textContent="Reset demo data";DATA=JSON.parse(JSON.stringify(SEED));save();GDATA=JSON.parse(JSON.stringify(GSEED));gsave();GUI.round=null;GUI.pt=null;GUI.form=null;UI.month=null;UI.sensor=null;UI.edit=false;route();toast("Demo data restored")});
