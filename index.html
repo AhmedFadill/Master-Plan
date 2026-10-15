@@ -1,580 +1,807 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Master Plan KCML</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: one-column console — plan overview with live module first, then the year's activities; sensor module = month strip, then month table */
+/* Layout: control-room console. Sticky top bar with language/theme; home = activity tiles; module = selector strip, KPI row, table + side chart; report = paper sheet */
 :root{
-  --bg:#eef1f4; --surface:#ffffff; --sunk:#e6eaee; --line:#d3dae1;
-  --fg:#16202a; --muted:#5b6977; --accent:#1d5d8a; --accent-ink:#ffffff; --accent-soft:#d9e7f1;
-  --ok:#1b7a4b; --ok-soft:#d9f0e3; --warn:#a46200; --warn-soft:#faead0; --bad:#b3261e; --bad-soft:#f7dad7; --na:#7a8794; --na-soft:#e4e9ed;
-  --f-body:"IBM Plex Sans","Segoe UI",Roboto,sans-serif;
-  --f-disp:"IBM Plex Sans Condensed","IBM Plex Sans","Arial Narrow",sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
-  --r:8px;
+  --bg:#edf0f3; --surface:#ffffff; --sunk:#e5e9ed; --line:#d2d9e0;
+  --fg:#15202b; --muted:#5a6876; --accent:#1c5c89; --accent-ink:#ffffff; --accent-soft:#d8e6f0;
+  --ok:#1a7a4a; --ok-soft:#d8efe2; --warn:#a36100; --warn-soft:#f9e9cf; --bad:#b2251d; --bad-soft:#f6d9d6; --na:#788694; --na-soft:#e3e8ec;
+  --shadow:0 1px 2px rgba(16,32,48,.06),0 4px 14px rgba(16,32,48,.05);
+  --f-body:"IBM Plex Sans","IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --f-disp:"IBM Plex Sans Condensed","IBM Plex Sans Arabic","Arial Narrow",sans-serif;
+  --f-mono:"IBM Plex Mono","IBM Plex Sans Arabic",ui-monospace,Menlo,Consolas,monospace;
+  --r:10px;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0d1319; --surface:#151e27; --sunk:#1b2630; --line:#283744;
-  --fg:#e5ecf2; --muted:#92a2b0; --accent:#69ade0; --accent-ink:#0a1520; --accent-soft:#1b3245;
-  --ok:#5ac88d; --ok-soft:#163325; --warn:#e8a94a; --warn-soft:#382a12; --bad:#f08a80; --bad-soft:#3b1a18; --na:#8695a2; --na-soft:#22303b;
+  --bg:#0c1218; --surface:#141d26; --sunk:#1a2530; --line:#273644;
+  --fg:#e4ebf1; --muted:#91a1af; --accent:#6aaee0; --accent-ink:#09141e; --accent-soft:#1a3144;
+  --ok:#58c78b; --ok-soft:#153224; --warn:#e7a849; --warn-soft:#372911; --bad:#ef887e; --bad-soft:#3a1917; --na:#8594a1; --na-soft:#212e39;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
   color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0d1319; --surface:#151e27; --sunk:#1b2630; --line:#283744;
-  --fg:#e5ecf2; --muted:#92a2b0; --accent:#69ade0; --accent-ink:#0a1520; --accent-soft:#1b3245;
-  --ok:#5ac88d; --ok-soft:#163325; --warn:#e8a94a; --warn-soft:#382a12; --bad:#f08a80; --bad-soft:#3b1a18; --na:#8695a2; --na-soft:#22303b;
+  --bg:#0c1218; --surface:#141d26; --sunk:#1a2530; --line:#273644;
+  --fg:#e4ebf1; --muted:#91a1af; --accent:#6aaee0; --accent-ink:#09141e; --accent-soft:#1a3144;
+  --ok:#58c78b; --ok-soft:#153224; --warn:#e7a849; --warn-soft:#372911; --bad:#ef887e; --bad-soft:#3a1917; --na:#8594a1; --na-soft:#212e39;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
   color-scheme:dark}
 *{box-sizing:border-box}
+html{background:var(--bg)}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.55;padding:0 16px 48px}
-.wrap{max-width:1100px;margin:0 auto}
-.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
-h1,h2,h3{font-family:var(--f-disp);text-wrap:balance;margin:0}
+[dir="rtl"] body{font-size:15.5px}
+.wrap{max-width:1140px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--f-disp);text-wrap:balance;margin:0}
+button,input,select{font:inherit}
 button:focus-visible,input:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.topbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-block:18px 14px;border-bottom:1px solid var(--line)}
-.brand{display:flex;align-items:center;gap:12px;min-width:0}
-.mark{width:38px;height:38px;border-radius:8px;background:var(--accent);display:grid;place-items:center;flex:none}
-.brand h1{font-size:1.3rem;font-weight:700}
-.brand p{margin:0;color:var(--muted);font-size:.82rem}
-.badge-demo{font-size:.7rem;padding:4px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
-main{padding-top:20px;display:flex;flex-direction:column;gap:20px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* top bar */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);margin-inline:-16px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.topin{max-width:1140px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--fg);min-width:0}
+.mark{width:38px;height:38px;border-radius:9px;background:var(--accent);display:grid;place-items:center;flex:none}
+.brand b{display:block;font-family:var(--f-disp);font-size:1.18rem;font-weight:700;line-height:1.2}
+.brand small{display:block;color:var(--muted);font-size:.78rem}
+.tools{display:flex;align-items:center;gap:8px}
+.tbtn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;font-weight:600;font-size:.84rem}
+.tbtn:hover{border-color:var(--accent)}
+.tbtn.icon{width:36px;padding:0;justify-content:center}
+.badge-demo{font-size:.68rem;padding:4px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+
+main{padding-top:22px;display:flex;flex-direction:column;gap:20px}
 .eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
-.ph{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 16px;margin-bottom:14px}
-.ph h2{font-size:1.15rem;font-weight:600}
-.sub{margin:2px 0 0;color:var(--muted);font-size:.84rem}
-.crumbs{font-size:.84rem;color:var(--muted)}
+[dir="rtl"] .eyebrow{letter-spacing:0;font-size:.78rem}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0;box-shadow:var(--shadow)}
+.ph{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:10px 16px;margin-bottom:14px}
+.ph h2{font-size:1.2rem;font-weight:600}
+.sub{margin:3px 0 0;color:var(--muted);font-size:.85rem}
+.crumbs{font-size:.85rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .crumbs a{color:var(--accent);text-decoration:none;font-weight:600}
 .crumbs a:hover{text-decoration:underline}
+.mtitle{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px}
+.mtitle h1{font-size:clamp(1.5rem,3.4vw,2rem);font-weight:700}
 
-/* featured module */
-.feature{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 24px;align-items:center}
-@media (max-width:700px){.feature{grid-template-columns:1fr}}
-.feature h2{font-size:1.5rem;font-weight:700}
-.big{font-family:var(--f-mono);font-size:2.6rem;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
-.live{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ok)}
-.live::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok)}
+/* home */
+.hero h1{font-size:clamp(1.7rem,4vw,2.3rem);font-weight:700}
+.hero p{margin:6px 0 0;color:var(--muted);max-width:62ch}
+.sec-t{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.sec-t h2{font-size:1.08rem;font-weight:600}
+.sec-t span{font-size:.82rem;color:var(--muted)}
+.livegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:14px}
+a.tile{display:flex;flex-direction:column;gap:14px;padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--fg);text-decoration:none;box-shadow:var(--shadow);position:relative}
+a.tile:hover{border-color:var(--accent)}
+a.tile .top{display:flex;gap:14px;align-items:flex-start}
+.ico{width:46px;height:46px;border-radius:11px;background:var(--accent-soft);display:grid;place-items:center;flex:none}
+a.tile h3{font-size:1.15rem;font-weight:700;line-height:1.3}
+a.tile .d{font-size:.82rem;color:var(--muted);margin-top:2px}
+a.tile .stat{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--line);margin-top:auto}
+a.tile .k{font-size:.76rem;color:var(--muted)}
+a.tile .v{font-family:var(--f-mono);font-size:2rem;font-weight:600;line-height:1.15}
+a.tile .go{font-weight:600;color:var(--accent);font-size:.88rem;white-space:nowrap}
+.agroup{display:flex;flex-direction:column}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:10px}
+a.at{display:flex;flex-direction:column;gap:8px;justify-content:space-between;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg);text-decoration:none;min-height:96px}
+a.at:hover{border-color:var(--accent)}
+a.at b{font-weight:600;font-size:.94rem;line-height:1.4}
+a.at .ft{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.78rem;color:var(--muted)}
 
-/* month strip */
-.months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;overflow-x:auto}
-@media (max-width:700px){.months{grid-template-columns:repeat(6,minmax(0,1fr))}}
-.mo{font:inherit;color:var(--fg);border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:0;position:relative}
-.mo .m{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
-.mo .v{font-family:var(--f-mono);font-size:.86rem;font-weight:600;font-variant-numeric:tabular-nums}
+/* selectors */
+.strip{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px}
+@media (max-width:760px){.strip{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px}
+.mo{color:var(--fg);border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;min-width:0;text-align:center}
+.mo .m{font-size:.7rem;color:var(--muted);font-weight:600;line-height:1.2}
+[dir="ltr"] .mo .m{text-transform:uppercase;letter-spacing:.05em}
+.mo .v{font-family:var(--f-mono);font-size:.86rem;font-weight:600}
 .mo.ok{background:var(--ok-soft);border-color:transparent} .mo.ok .v{color:var(--ok)}
 .mo.warn{background:var(--warn-soft);border-color:transparent} .mo.warn .v{color:var(--warn)}
 .mo.bad{background:var(--bad-soft);border-color:transparent} .mo.bad .v{color:var(--bad)}
-.mo.ksd{background:var(--sunk);border-color:transparent} .mo.ksd .v{color:var(--muted);font-family:var(--f-body);font-size:.74rem}
+.mo.ksd{background:var(--sunk);border-color:transparent} .mo.ksd .v,.mo.empty .v{color:var(--muted);font-family:var(--f-body);font-size:.74rem}
 .mo.due{border:1.5px dashed var(--accent)} .mo.due .v{color:var(--accent);font-family:var(--f-body);font-size:.74rem}
-.mo.future{opacity:.5;cursor:default}
+.mo.add{border-style:dashed;color:var(--accent)} .mo.add .v{font-family:var(--f-body);font-size:.78rem;color:var(--accent)}
+.mo.future{opacity:.45;cursor:default}
 .mo[aria-current="true"]{box-shadow:0 0 0 2px var(--accent)}
 .mo:not(.future):hover{border-color:var(--accent)}
 
-/* activities */
-.groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
-.group h3{font-size:.95rem;font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between;gap:8px}
-.group h3 span{font-family:var(--f-mono);color:var(--muted);font-weight:500;font-size:.8rem}
-.acts{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.act{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);font-size:.88rem;background:var(--surface)}
-.act:last-child{border-bottom:0}
-a.act{color:var(--fg);text-decoration:none}
-a.act:hover{background:var(--accent-soft)}
-.tag{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:4px;white-space:nowrap}
-.tag.live{color:var(--ok);background:var(--ok-soft)} .tag.live::before{display:none}
-.tag.next{color:var(--muted);background:var(--sunk)}
+/* kpis */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.kpi{background:var(--sunk);border-radius:8px;padding:12px 14px;min-width:0}
+.kpi .k{color:var(--muted);font-size:.78rem}
+.kpi .v{font-family:var(--f-mono);font-size:1.55rem;font-weight:600;line-height:1.3}
+.kpi .v small{font-size:.85rem;color:var(--muted);font-weight:500}
+.kpi .h{font-size:.76rem;color:var(--muted)}
+.c-ok{color:var(--ok)} .c-warn{color:var(--warn)} .c-bad{color:var(--bad)} .c-na{color:var(--muted)}
 
 .pill{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:99px;white-space:nowrap}
-.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
 .p-ok{background:var(--ok-soft);color:var(--ok)} .p-warn{background:var(--warn-soft);color:var(--warn)} .p-bad{background:var(--bad-soft);color:var(--bad)} .p-na{background:var(--na-soft);color:var(--na)}
+.tag{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.tag.live{color:var(--ok);background:var(--ok-soft)}
+.tag.next{color:var(--muted);background:var(--sunk)}
 
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-.kpi{background:var(--sunk);border-radius:var(--r);padding:12px 14px}
-.kpi .k{color:var(--muted);font-size:.78rem}
-.kpi .v{font-family:var(--f-mono);font-size:1.5rem;font-weight:600;font-variant-numeric:tabular-nums}
-.kpi .h{font-size:.76rem;color:var(--muted)}
-
+/* tables */
 .split{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
-@media (max-width:900px){.split{grid-template-columns:1fr}}
-.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
-table{border-collapse:collapse;width:100%;min-width:640px;font-size:.86rem}
-th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
-th{background:var(--sunk);font-weight:600;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+@media (max-width:920px){.split{grid-template-columns:1fr}}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+.tw{min-width:660px}
+th,td{padding:9px 12px;text-align:start;border-bottom:1px solid var(--line);vertical-align:middle}
+th{background:var(--sunk);font-weight:600;color:var(--muted);font-size:.74rem;white-space:nowrap}
+[dir="ltr"] th{text-transform:uppercase;letter-spacing:.04em;font-size:.7rem}
 tr:last-child td{border-bottom:0}
-td.n,th.n{text-align:right}
-td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+td.n,th.n{text-align:end}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 td .code{font-family:var(--f-mono);font-size:.74rem;color:var(--muted);margin-inline-start:6px}
+td.loc{font-weight:600}
+tr.gstart td{border-top:2px solid var(--line)}
 tbody tr.pick{cursor:pointer}
 tbody tr.pick:hover td:first-child,tbody tr[aria-current="true"] td:first-child{color:var(--accent)}
 tbody tr[aria-current="true"] td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
-.flag{display:block;font-size:.75rem;color:var(--warn);margin-top:2px}
+[dir="rtl"] tbody tr[aria-current="true"] td:first-child{box-shadow:inset -3px 0 0 var(--accent)}
+.flag{display:block;font-size:.75rem;color:var(--warn);margin-top:2px;font-family:var(--f-body);white-space:normal}
 tr.excl td{color:var(--na)}
+.cnt{display:inline-block;font-size:.66rem;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:4px;padding:0 5px;margin-inline-start:5px;vertical-align:1px;font-family:var(--f-body)}
+.vals{display:block;font-size:.7rem;color:var(--muted);font-weight:400}
 .side{display:flex;flex-direction:column;gap:12px}
+.chart{width:100%;overflow-x:auto}
 .chart svg{display:block;width:100%;height:auto}
-.note{font-size:.84rem;background:var(--sunk);border-radius:6px;padding:10px 12px}
-.meta{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted);font-size:.84rem}
+.note{font-size:.85rem;background:var(--sunk);border-radius:8px;padding:10px 12px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted);font-size:.85rem}
 .meta b{color:var(--fg);font-weight:600}
-.btn{font:inherit;font-weight:600;font-size:.86rem;border-radius:6px;padding:8px 16px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg);text-decoration:none;display:inline-flex;align-items:center}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn.link{border-color:transparent;background:none;color:var(--muted);padding-inline:6px}
-.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-label.f{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--muted);min-width:0}
-input{font:inherit;font-size:.9rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 10px;min-width:0}
-input.numin{font-family:var(--f-mono);text-align:right;width:100%;min-width:90px}
-input[aria-invalid="true"]{border-color:var(--bad);background:var(--bad-soft)}
-.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
-.empty{text-align:center;padding:28px 16px;color:var(--muted)}
-.empty h3{color:var(--fg);font-size:1.1rem;margin-bottom:6px}
-.toast{position:fixed;inset-inline:0;bottom:calc(20px + env(safe-area-inset-bottom,0px));margin:auto;width:max-content;max-width:calc(100% - 32px);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:.88rem;font-weight:600;z-index:5}
-footer{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:.8rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center}
-footer p{margin:0;max-width:75ch}
-.livegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:16px}
-.mod{display:flex;flex-direction:column;gap:14px}
-.mod .head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
-.mod h2{font-size:1.3rem;font-weight:700;margin-top:4px}
-.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:6px}
-.chips .mo.add{border-style:dashed;color:var(--accent)} .chips .mo.add .v{font-family:var(--f-body);font-size:.78rem}
-.mo.empty .v{color:var(--muted);font-family:var(--f-body);font-size:.74rem}
+.dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 24px}
+.dl div{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line);font-size:.86rem}
+.dl div span:first-child{color:var(--muted)}
+.dl div span:last-child{font-family:var(--f-mono);font-weight:600}
+.twocharts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.78rem;color:var(--muted);align-items:center}
+.sw{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-inline-end:6px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin-inline-end:6px}
 .findings{display:flex;flex-direction:column;gap:8px}
-.finding{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.finding{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;padding:12px 14px;border:1px solid var(--line);border-radius:8px}
 .finding .ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.85rem;grid-row:1/3}
 .finding .ic.bad{background:var(--bad-soft);color:var(--bad)} .finding .ic.warn{background:var(--warn-soft);color:var(--warn)}
 .finding b{font-size:.92rem}
-.finding p{margin:0;font-size:.84rem;color:var(--muted)}
-td.loc{font-weight:600}
-tr.gstart td{border-top:2px solid var(--line)}
-.hero{padding-block:8px 4px}
-.hero h2{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700}
-.hero p{margin:6px 0 0;color:var(--muted);max-width:60ch}
-.sec-t{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px}
-.sec-t h3{font-size:1.05rem;font-weight:600}
-.sec-t span{font-size:.82rem;color:var(--muted)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px}
-a.tile{display:flex;flex-direction:column;gap:16px;padding:22px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg);text-decoration:none;position:relative;overflow:hidden}
-a.tile:hover{border-color:var(--accent);box-shadow:0 6px 20px rgba(20,40,60,.08)}
-a.tile .ico{width:48px;height:48px;border-radius:10px;background:var(--accent-soft);display:grid;place-items:center;flex:none}
-a.tile .top{display:flex;gap:14px;align-items:center}
-a.tile h4{margin:0;font-family:var(--f-disp);font-size:1.3rem;font-weight:700}
-a.tile .d{font-size:.84rem;color:var(--muted)}
-a.tile .stat{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--line)}
-a.tile .stat .k{font-size:.76rem;color:var(--muted)}
-a.tile .stat .v{font-family:var(--f-mono);font-size:2rem;font-weight:600;line-height:1.1}
-a.tile .go{font-weight:600;color:var(--accent);font-size:.9rem;white-space:nowrap}
-a.tile:hover .go{text-decoration:underline}
-.soon{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:10px}
-.soon div{padding:12px 14px;border:1px dashed var(--line);border-radius:8px;font-size:.86rem;color:var(--muted);display:flex;flex-direction:column;gap:2px}
-.soon div b{color:var(--fg);font-weight:500}
-.soon div small{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
-@media (prefers-reduced-motion:no-preference){a.tile{transition:border-color .15s,box-shadow .15s}}
-.agroup{display:flex;flex-direction:column;gap:10px}
-.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:10px}
-a.at{display:flex;flex-direction:column;gap:10px;justify-content:space-between;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg);text-decoration:none;min-height:104px}
-a.at:hover{border-color:var(--accent)}
-a.at b{font-weight:600;font-size:.95rem;line-height:1.35}
-a.at .ft{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.78rem;color:var(--muted)}
-a.at .ft .v{font-family:var(--f-mono);font-weight:600;font-size:1.05rem}
-a.at.live{border-color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+.finding p{margin:0;font-size:.85rem;color:var(--muted)}
+
+/* buttons & forms */
+.btn{font-weight:600;font-size:.86rem;border-radius:7px;padding:8px 16px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.link{border-color:transparent;background:none;color:var(--muted);padding-inline:6px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.between{justify-content:space-between}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--muted);min-width:0}
+input{font-size:.9rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 10px;min-width:0}
+input[aria-invalid="true"]{border-color:var(--bad);background:var(--bad-soft)}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
+.multi{display:flex;flex-wrap:wrap;gap:4px;align-items:center;justify-content:flex-end}
+.multi input{width:86px;font-family:var(--f-mono);text-align:right;padding:6px 8px}
+.addr{width:28px;height:28px;border-radius:6px;border:1px dashed var(--accent);background:none;color:var(--accent);cursor:pointer;font-weight:700;line-height:1}
+.mavg{flex-basis:100%;text-align:end;font-size:.72rem;color:var(--accent);font-family:var(--f-mono);min-height:0}
+.mavg:empty{display:none}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:10px 24px}
+.frow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+.frow > span{font-size:.86rem}
+.frow > span small{display:block;color:var(--muted);font-size:.74rem}
+.empty{text-align:center;padding:28px 16px;color:var(--muted)}
+.empty h3{color:var(--fg);font-size:1.1rem;margin-bottom:6px}
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px}
 .steps div{background:var(--sunk);border-radius:8px;padding:12px 14px;font-size:.86rem}
 .steps div b{display:block;margin-bottom:2px}
-@media (prefers-reduced-motion:no-preference){a.at{transition:border-color .15s}}
+details.cfg summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+details.cfg summary::-webkit-details-marker{display:none}
+details.cfg summary::after{content:"+";font-family:var(--f-mono);color:var(--accent);font-size:1.2rem}
+details.cfg[open] summary::after{content:"−"}
+.toast{position:fixed;inset-inline:0;bottom:calc(20px + env(safe-area-inset-bottom,0px));margin:auto;width:max-content;max-width:calc(100% - 32px);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:.88rem;font-weight:600;z-index:20}
+footer{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:.8rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center}
+footer p{margin:0;max-width:78ch}
+
+/* report sheet (explicit paper colors in both themes) */
+.paperwrap{overflow-x:auto;padding:4px}
+.paper{background:#ffffff;color:#18222c;max-width:860px;min-width:640px;margin:0 auto;padding:38px 42px;font-family:"IBM Plex Sans","IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;font-size:13px;line-height:1.5;border-radius:4px;box-shadow:0 2px 16px rgba(0,0,0,.18)}
+.paper .rh{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid #1c5c89;padding-bottom:12px;margin-bottom:16px}
+.paper .rh .org{font-weight:700;font-size:15px;color:#1c5c89}
+.paper .rh .doc{font-size:11px;color:#5a6876;text-align:end}
+.paper h1{font-size:21px;margin:2px 0 0;font-family:inherit;color:#18222c}
+.paper h2{font-size:14px;margin:18px 0 8px;font-family:inherit;color:#1c5c89}
+.paper .rmeta{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.paper .rmeta div{border:1px solid #d2d9e0;border-radius:4px;padding:6px 9px}
+.paper .rmeta span{display:block;font-size:10px;color:#5a6876}
+.paper .rmeta b{font-size:12.5px}
+.paper .rk{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.paper .rk div{background:#f0f3f6;border-radius:4px;padding:9px 10px}
+.paper .rk span{display:block;font-size:10.5px;color:#5a6876}
+.paper .rk b{font-family:"IBM Plex Mono",monospace;font-size:17px}
+.paper table{width:100%;border-collapse:collapse;font-size:11.5px}
+.paper th,.paper td{border:1px solid #cfd7de;padding:5px 7px;text-align:start}
+.paper th{background:#eef2f5;font-weight:600;color:#3d4a57}
+.paper td.n{text-align:end;font-family:"IBM Plex Mono",monospace;white-space:nowrap}
+.paper .ok{color:#1a7a4a;font-weight:600} .paper .warn{color:#a36100;font-weight:600} .paper .bad{color:#b2251d;font-weight:600} .paper .na{color:#788694}
+.paper ul{margin:4px 0;padding-inline-start:18px}
+.paper .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:34px}
+.paper .sign div{border-top:1px solid #18222c;padding-top:5px;font-size:11px;color:#5a6876}
+.paper .rf{margin-top:22px;font-size:10px;color:#788694;display:flex;justify-content:space-between;border-top:1px solid #d2d9e0;padding-top:6px}
+@media (prefers-reduced-motion:no-preference){a.tile,a.at,.btn,.mo,.tbtn{transition:border-color .15s,background .15s,box-shadow .15s}}
 </style>
 
+<header class="topbar"><div class="topin">
+  <a class="brand" href="#"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--accent-ink)" stroke-width="2" stroke-linecap="round"><path d="M4 16a8 8 0 1 1 16 0"/><path d="M12 16l4-5"/><circle cx="12" cy="16" r="1.4" fill="var(--accent-ink)"/></svg></span>
+   <span><b id="brandName">Master Plan KCML</b><small id="brandSub">Process engineering · 2026</small></span></a>
+  <div class="tools">
+   <span class="badge-demo" id="demoBadge">Demo</span>
+   <button class="tbtn" id="langBtn" type="button">العربية</button>
+   <button class="tbtn icon" id="themeBtn" type="button" aria-label="Theme"></button>
+  </div>
+</div></header>
 <div class="wrap">
-  <header class="topbar">
-    <div class="brand">
-      <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--accent-ink)" stroke-width="2" stroke-linecap="round"><path d="M4 16a8 8 0 1 1 16 0"/><path d="M12 16l4-5"/><circle cx="12" cy="16" r="1.4" fill="var(--accent-ink)"/></svg></div>
-      <div><h1>Master Plan KCML</h1><p>Process engineering activities · 2026</p></div>
-    </div>
-    <span class="badge-demo">Demo</span>
-  </header>
   <main id="app"></main>
-  <footer>
-    <p>Demo version. Data is stored in this browser only. The production system runs on a server inside the plant network with one shared database for every device, user accounts, Excel export and printable reports.</p>
-    <button class="btn link" id="resetBtn">Reset demo data</button>
-  </footer>
+  <footer><p id="footNote"></p><button class="btn link" id="resetBtn" type="button"></button></footer>
 </div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
-/* ===== the Master Plan, from the team's 2026 Drive folder ===== */
-const PLAN=[
- {g:"Kiln & pyroprocessing",items:["Kiln audit","Kiln shutdown inspection","Kiln shell scanner","Kiln EP dust drop test & kiln feed bin losses","P.H & kiln, cooler 1st level inspection","P.H false air measurements","Burner audit","Burner flame setting & inspection","Bypass % – flow measurement","Monitor volatiles input and output","Clinker cooler fans flow measurements","Pyro line major fans audit"]},
- {g:"Instruments & analyzers",items:["Critical sensor check","Gas analyzers cross check"]},
- {g:"Mills & dedusting",items:["RM audit","CM master plan activities","Bag filters measurements"]},
- {g:"Utilities & reporting",items:["Compressors","Energy consumption","RMs & kiln reports"]}
-];
+/* =================== preferences, i18n =================== */
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let L=store.get("kcml-lang","en");if(L!=="ar"&&L!=="en")L="en";
+let THEME=store.get("kcml-theme",null);
+const tx=(en,ar)=>L==="ar"?ar:en;
+function applyPrefs(){const r=document.documentElement;r.lang=L;r.dir=L==="ar"?"rtl":"ltr";if(THEME==="dark"||THEME==="light")r.dataset.theme=THEME;else delete r.dataset.theme}
+const isDark=()=>THEME?THEME==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+const MEN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const MAR=["كانون الثاني","شباط","آذار","نيسان","أيار","حزيران","تموز","آب","أيلول","تشرين الأول","تشرين الثاني","كانون الأول"];
+const mName=m=>(L==="ar"?MAR:MEN)[m-1];
+const mShort=m=>L==="ar"?MAR[m-1]:MEN[m-1].slice(0,3);
+const mTick=m=>L==="ar"?String(m):MEN[m-1].slice(0,1);
 
-/* ===== critical sensor check ===== */
-const POINTS=[
- {id:"SAT",name:"Secondary air temp",u:"°C"},{id:"TAT",name:"Tertiary air temp",u:"°C"},
- {id:"P20",name:"ID fan inlet press",u:"mbar"},{id:"T04",name:"PH outlet temp",u:"°C"},
- {id:"P04",name:"PH outlet press",u:"mbar"},{id:"T33",name:"Kiln inlet temp",u:"°C"},
- {id:"P05",name:"Kiln inlet pressure",u:"mbar"},{id:"T11",name:"Material temp left",u:"°C"},
- {id:"T12",name:"Material temp right",u:"°C"},{id:"T09",name:"Gas outlet temp left",u:"°C"},
- {id:"T10",name:"Gas outlet temp right",u:"°C"},{id:"CLK",name:"Clinker temp",u:"°C"}];
-const N=null,XL="Imported from Excel";
-const SEED={
- 1:{op:XL,v:[[1080,1090],[682,675],[-61,-60],[446,432],[-58,-51],[1052,980],[-5,-3],[814,824],[850,856],[880,870],[915,900],[100,50]]},
- 2:{op:XL,v:[[1066,1089],[734,687],[-61,-62],[450,448],[-56,-59],[1044,1048],[-7,-6],[861,860],[881,885],[888,895],[902,900],[N,N]]},
- 3:{ksd:true,op:XL},
- 4:{day:19,op:XL,v:[[1098,1100],[822,819],[-66.8,-62],[441,439],[-61.18,-59],[1073,990],[-6,N],[846,842],[844,848],[883,900],[871,882],[164,155]]},
- 5:{op:XL,v:[[1212,1188],[744,750],[-63,-62],[435.2,440],[-58,-59],[1111,920],[-7,-5.9],[866,853],[865,847],[899,878],[902,905],[N,N]]},
- 6:{op:XL,v:[[1214,1180],[634,650],[-61,-62],[424,420],[-58,-57],[1085,999],[-6,-4.5],[827,834],[848,850],[885,865],[896,900],[N,N]]},
- 7:{day:14,op:XL,v:[[1190,1192],[N,N],[-56,N],[412,411],[-51,-47],[1064,980],[-6,-3.5],[848,846],[846,856],[899,878],[902,905],[N,N]]},
- 8:{op:XL,v:[[677,675],[1064,1085],[-56.8,-56],[426,430],[-53.2,-51],[1032,922],[-5,-5],[848,858],[869,871.5],[842,871],[903,884],[N,N]]},
- 9:{op:XL,v:[[1016,1023],[641,660],[-54,-55],[428,422],[-52,-49],[1064,980],[-4.54,-6],[848,844],[845,846],[851,853],[842,844],[N,N]]}
-};
-const KEY="kcml-plan-demo-v1";
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&typeof s==="object")return s}catch(e){}return JSON.parse(JSON.stringify(SEED))}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(DATA))}catch(e){}}
-let DATA=load();
-const NOW=new Date();const CUR=NOW.getFullYear()===2026?NOW.getMonth()+1:(NOW.getFullYear()>2026?13:0);
-const UI={month:null,sensor:null,edit:false};
-
-const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
-const MS=MONTHS.map(m=>m.slice(0,3));
+/* =================== numbers & readings =================== */
+const N=null;
 const isNum=x=>typeof x==="number"&&isFinite(x);
-function calc(p,c){if(!isNum(p)||!isNum(c)||p===0)return {ok:false,diff:null,err:null};const d=p-c;return {ok:true,diff:d,err:d/p}}
-function cls(e){if(e==null)return "na";const a=Math.abs(e);return a<=.02?"ok":a<=.05?"warn":"bad"}
-function accCls(a){if(a==null)return "na";return a>=.98?"ok":a>=.95?"warn":"bad"}
-const TXT={ok:"In tolerance",warn:"Watch",bad:"Calibrate",na:"Missing"};
-const pct=(x,d=1)=>x==null?"—":(x*100).toFixed(d)+"%";
-const fmt=x=>x==null?"—":(Math.round(x*100)/100).toString();
+const arr=x=>Array.isArray(x)?x.filter(isNum):(isNum(x)?[x]:[]);
+const avg=x=>{const a=arr(x);return a.length?a.reduce((s,v)=>s+v,0)/a.length:null};
+const cnt=x=>arr(x).length;
+const spread=x=>{const a=arr(x);return a.length<2?null:Math.max(...a)-Math.min(...a)};
+const ISO=s=>L==="ar"?"⁦"+s+"⁩":s;
+const raw=(x,d=2)=>x==null?"—":(Math.round(x*10**d)/10**d).toLocaleString("en-US",{maximumFractionDigits:d});
+const fnum=(x,d=2)=>x==null?"—":ISO(raw(x,d));
+const pct=(x,d=1)=>x==null?"—":ISO((x*100).toFixed(d)+"%");
+const sgn=(x,d=1,u="")=>x==null?"—":ISO((x>0?"+":x<0?"−":"±")+Math.abs(x).toFixed(d)+u);
 const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function summary(v,signed){const e=v.map(([p,c])=>calc(p,c)).filter(r=>r.ok).map(r=>r.err);if(!e.length)return {acc:null,n:0,ok:0,warn:0,bad:0};
- const avg=signed?e.reduce((a,x)=>a+x,0)/e.length:e.reduce((a,x)=>a+Math.abs(x),0)/e.length;const c={ok:0,warn:0,bad:0};e.forEach(x=>c[cls(x)]++);return {acc:1-avg,n:e.length,...c}}
-const done=()=>Object.keys(DATA).map(Number).filter(m=>DATA[m]&&DATA[m].v).sort((a,b)=>a-b);
-const mLabel=m=>(DATA[m]&&DATA[m].day?DATA[m].day+" ":"")+MONTHS[m-1]+" 2026";
-function flags(m,i){const out=[];const v=DATA[m].v;const [p,c]=v[i];
- if(i===0&&isNum(p)&&isNum(v[1][0])&&p<v[1][0])out.push("Lower than TAT; SAT and TAT may be swapped");
- if(i===1&&isNum(p)&&isNum(v[0][0])&&p>v[0][0])out.push("Higher than SAT; SAT and TAT may be swapped");
- if(isNum(p)&&isNum(c)){const d=done().find(k=>k<m&&DATA[k].v[i][0]===p&&DATA[k].v[i][1]===c);if(d)out.push("Same as "+MS[d-1]+"; check it wasn't copied")}
- if(isNum(p)!==isNum(c))out.push("One reading missing");return out}
-function nextDue(){for(let m=1;m<=Math.min(12,CUR);m++)if(!DATA[m])return m;return null}
+function cell(x,d=2){const a=arr(x);if(!a.length)return "—";if(a.length===1)return fnum(a[0],d);
+ return `${fnum(avg(x),d)}<span class="cnt">×${a.length}</span><span class="vals">${a.map(v=>raw(v,d)).join(" · ")}</span>`}
+const cellTxt=(x,d=2)=>{const a=arr(x);if(!a.length)return "—";return raw(avg(x),d)+(a.length>1?` (×${a.length})`:"")};
+function pill(k,label){return `<span class="pill p-${k}">${label}</span>`}
+const XL=()=>tx("Imported from Excel","مستورد من الإكسل");
+const XLKEY="__xl";
+const opName=o=>o===XLKEY?XL():o;
 
-function monthStrip(){
- return `<div class="months" role="list">${MS.map((n,k)=>{const m=k+1;const d=DATA[m];let c="",val="—";
-  if(d&&d.ksd){c="ksd";val="KSD"}else if(d&&d.v){const s=summary(d.v);c=accCls(s.acc);val=pct(s.acc)}
-  else if(m<=CUR){c="due";val=m===CUR?"Due":"Missed"}else c="future";
-  return `<button class="mo ${c}" role="listitem" data-m="${m}" ${c==="future"?'disabled':''} aria-current="${UI.month===m}" aria-label="${MONTHS[k]}: ${val}"><span class="m">${n}</span><span class="v">${val}</span></button>`}).join("")}</div>`}
+/* =================== the plan =================== */
+const PLAN=[
+ {g:["Kiln & pyroprocessing","الفرن والحرق"],items:[
+  ["Kiln audit","تدقيق الفرن","Periodic audit of kiln operating conditions and performance.","تدقيق دوري لظروف تشغيل الفرن وأدائه."],
+  ["Kiln shutdown inspection","فحص توقف الفرن","Inspection findings recorded during each kiln shutdown (KSD).","نتائج الفحص المسجّلة خلال كل توقف للفرن (KSD)."],
+  ["Kiln shell scanner","ماسح غلاف الفرن","Kiln shell temperature profile from the scanner, to track coating and hot spots.","منحنى حرارة غلاف الفرن من الماسح، لمتابعة الطلاء والنقاط الساخنة."],
+  ["Kiln EP dust drop test & kiln feed bin losses","اختبار غبار المرسّب الكهربائي وفواقد خزان التغذية","Dust drop-out at the kiln electrostatic precipitator and losses at the kiln feed bin.","سقوط الغبار في المرسّب الكهربائي للفرن والفواقد في خزان تغذية الفرن."],
+  ["P.H & kiln, cooler 1st level inspection","فحص المستوى الأول للمسخّن والفرن والمبرّد","Routine first-level inspection of the preheater, kiln and clinker cooler.","فحص روتيني من المستوى الأول للمسخّن الأولي والفرن ومبرّد الكلنكر."],
+  ["P.H false air measurements","قياسات الهواء الكاذب في المسخّن","False air ingress measured across the preheater stages.","قياس تسرّب الهواء الكاذب عبر مراحل المسخّن الأولي."],
+  ["Burner audit","تدقيق الحارق","Audit of burner operating parameters.","تدقيق معاملات تشغيل الحارق."],
+  ["Burner flame setting & inspection","ضبط لهب الحارق وفحصه","Burner flame setting checks and inspection results.","فحوصات ضبط لهب الحارق ونتائج الفحص."],
+  ["Bypass % – flow measurement","نسبة البايباس وقياس التدفق","Bypass flow measurement and bypass percentage.","قياس تدفق البايباس ونسبته."],
+  ["Monitor volatiles input and output","مراقبة المواد المتطايرة","Input and output balance of volatiles through the kiln system.","موازنة دخول وخروج المواد المتطايرة في منظومة الفرن."],
+  ["Clinker cooler fans flow measurements","قياسات تدفق مراوح المبرّد","Measured air flow of each clinker cooler fan.","التدفق المقاس لكل مروحة في مبرّد الكلنكر."],
+  ["Pyro line major fans audit","تدقيق المراوح الرئيسية لخط الحرق","Fan efficiency against the supplier curves, starting with the ID fan of line FA.","كفاءة المراوح مقارنة بمنحنيات المورّد، بدءاً بمروحة السحب لخط FA.","#fan"]]},
+ {g:["Instruments & analyzers","الأجهزة والمحللات"],items:[
+  ["Critical sensor check","فحص الحساسات الحرجة","Monthly cross check of 12 kiln-line sensors: field measurement against the CCR reading.","مقارنة شهرية لـ 12 حساساً على خط الفرن: القراءة الميدانية مقابل قراءة غرفة التحكم.","#sensors"],
+  ["Gas analyzers cross check","المقارنة المتقاطعة لمحللات الغاز","Cross check of the five process gas analyzers (O₂, CO, NOx) against a portable analyzer.","مقارنة محللات الغاز الخمسة (O₂ وCO وNOx) بجهاز قياس محمول.","#gas"]]},
+ {g:["Mills & dedusting","الطواحين وإزالة الغبار"],items:[
+  ["RM audit","تدقيق طاحونة المواد الخام","Raw mill audit.","تدقيق طاحونة المواد الخام."],
+  ["CM master plan activities","أنشطة طاحونة الإسمنت","Cement mill activities in the master plan.","أنشطة طاحونة الإسمنت ضمن الخطة الرئيسية."],
+  ["Bag filters measurements","قياسات الفلاتر الكيسية","Measurements on the plant bag filters.","قياسات الفلاتر الكيسية في المعمل."]]},
+ {g:["Utilities & reporting","الخدمات والتقارير"],items:[
+  ["Compressors","الضواغط","Compressor performance and consumption records.","سجلات أداء الضواغط واستهلاكها."],
+  ["Energy consumption","استهلاك الطاقة","Plant energy consumption tracking.","متابعة استهلاك الطاقة في المعمل."],
+  ["RMs & kiln reports","تقارير الطواحين والفرن","Periodic raw mill and kiln reports.","تقارير دورية للطواحين والفرن."]]}
+];
+const slug=t=>t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const ALL=[];PLAN.forEach(g=>g.items.forEach(it=>ALL.push({en:it[0],ar:it[1],den:it[2],dar:it[3],live:it[4]||null,g:g.g,slug:slug(it[0])})));
+const aName=a=>tx(a.en,a.ar);const gName=g=>tx(g[0],g[1]);
 
-/* ===== SENSOR MODULE ===== */
-function renderSensors(){
- const ds=done();if(UI.month==null)UI.month=ds[ds.length-1]||nextDue()||1;
- const m=UI.month;const d=DATA[m];
- document.getElementById("app").innerHTML=`
- <nav class="crumbs"><a href="#">← Home</a> / Instruments &amp; analyzers / <span style="color:var(--fg)">Critical sensor check</span></nav>
- <section class="panel">
-  <div class="ph"><div><span class="eyebrow">2026 · monthly</span><h2>Critical sensor check</h2><p class="sub">Select a month. Colors show the month's accuracy: green ≥ 98%, amber 95–98%, red below 95%.</p></div></div>
-  ${monthStrip()}
- </section>
- <section id="monthPanel">${(!d||UI.edit)&&!(d&&d.ksd&&!UI.edit)?formPanel(m):d.ksd?ksdPanel(m):monthPanel(m)}</section>`;
- document.querySelectorAll(".mo[data-m]").forEach(b=>b.addEventListener("click",()=>{UI.month=+b.dataset.m;UI.edit=false;renderSensors()}));
- bindMonth(m);
-}
-function ksdPanel(m){return `<div class="panel"><div class="empty"><h3>${MONTHS[m-1]}: kiln shutdown (KSD)</h3><p>No readings this month. Shutdown months are left out of the averages instead of showing as errors.</p>
- <button class="btn" id="editBtn">Record readings instead</button></div></div>`}
-function monthPanel(m){
- const d=DATA[m];const s=summary(d.v),x=summary(d.v,true);
- const ds=done();const prev=ds.filter(k=>k<m).pop();const ps=prev?summary(DATA[prev].v):null;
- const delta=ps&&s.acc!=null?(s.acc-ps.acc)*100:null;
- if(UI.sensor==null){let w=0,wv=-1;d.v.forEach(([p,c],i)=>{const r=calc(p,c);if(r.ok&&Math.abs(r.err)>wv){wv=Math.abs(r.err);w=i}});UI.sensor=w}
- const rows=POINTS.map((pt,i)=>{const [p,c]=d.v[i];const r=calc(p,c);const k=r.ok?cls(r.err):"na";
-  return `<tr class="pick ${r.ok?"":"excl"}" data-i="${i}" tabindex="0" aria-current="${UI.sensor===i}"><td>${pt.name}<span class="code">${pt.id}</span>${flags(m,i).map(f=>`<span class="flag">⚠ ${esc(f)}</span>`).join("")}</td>
-  <td class="n">${fmt(p)}</td><td class="n">${fmt(c)}</td><td class="n">${r.ok?fmt(r.diff):"—"}</td><td class="n">${pct(r.err)}</td><td><span class="pill p-${k}">${TXT[k]}</span></td></tr>`}).join("");
- return `<div class="panel">
-  <div class="ph"><div><span class="eyebrow">Monthly readings</span><h2>${mLabel(m)}</h2><div class="meta" style="margin-top:4px"><span>Recorded by <b>${esc(d.op)}</b></span>${d.note?`<span>Notes <b>${esc(d.note)}</b></span>`:""}</div></div>
-   <button class="btn" id="editBtn">Edit readings</button></div>
-  <div class="kpis" style="margin-bottom:16px">
-   <div class="kpi"><div class="k">Accuracy</div><div class="v" style="color:var(--${accCls(s.acc)==="ok"?"ok":accCls(s.acc)==="warn"?"warn":"bad"})">${pct(s.acc)}</div><div class="h">${delta==null?"First recorded month":(delta>=0?"▲ +":"▼ ")+delta.toFixed(1)+" pts vs "+MS[prev-1]}</div></div>
-   <div class="kpi"><div class="k">In tolerance (≤ 2%)</div><div class="v">${s.ok}<span style="font-size:.9rem;color:var(--muted)"> / ${s.n}</span></div><div class="h">${12-s.n} not measured</div></div>
-   <div class="kpi"><div class="k">Need calibration (&gt; 5%)</div><div class="v" style="color:var(--bad)">${s.bad}</div><div class="h">${s.warn} on watch</div></div>
-   <div class="kpi"><div class="k">Old Excel formula</div><div class="v" style="color:var(--muted)">${pct(x.acc)}</div><div class="h">Signed average hides errors</div></div>
-  </div>
-  <div class="split">
-   <div class="tablewrap"><table><thead><tr><th>Sensor</th><th class="n">Process</th><th class="n">CCR</th><th class="n">Diff.</th><th class="n">Error</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>
-   <aside class="side" id="sensorSide">${sensorSide()}</aside>
-  </div>
-  <p class="sub" style="margin-top:10px">Diff. = Process − CCR · Error = Diff. ÷ Process · Select a sensor to see its history.</p>
- </div>`}
-function sensorSide(){
- const i=UI.sensor;const pt=POINTS[i];const ds=done();
- const errs=ds.map(m=>({m,e:calc(...DATA[m].v[i]).err}));const real=errs.filter(x=>x.e!=null);
- const W=320,H=180,L=40,R=8,T=14,B=28;let lim=Math.max(.06,...real.map(x=>Math.abs(x.e)));lim=Math.ceil(lim*100/5)*5/100;
- const x=k=>L+(errs.length<2?(W-L-R)/2:k*(W-L-R)/(errs.length-1));const y=v=>T+(lim-v)/(2*lim)*(H-T-B);
- let g=`<rect x="${L}" y="${y(.02)}" width="${W-L-R}" height="${y(-.02)-y(.02)}" fill="var(--ok)" opacity=".12"/>`;
- [lim,0,-lim].forEach(t=>{g+=`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" ${t===0?'stroke-width="1.5"':''}/><text x="${L-6}" y="${y(t)+4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono,monospace">${Math.round(t*100)}%</text>`});
- let d="",st=true;errs.forEach((p,k)=>{if(p.e==null){st=true;return}d+=(st?"M":"L")+x(k)+" "+y(p.e)+" ";st=false});
- g+=`<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2"/>`;
- errs.forEach((p,k)=>{g+=`<text x="${x(k)}" y="${H-8}" text-anchor="middle" font-size="10" fill="${p.m===UI.month?"var(--accent)":"var(--muted)"}" font-weight="${p.m===UI.month?600:400}">${MS[p.m-1][0]}</text>`;
-  if(p.e!=null){const c=cls(p.e);g+=`<circle cx="${x(k)}" cy="${y(p.e)}" r="${p.m===UI.month?5.5:4}" fill="var(--${c==="ok"?"ok":c==="warn"?"warn":"bad"})" stroke="var(--surface)" stroke-width="1.5"/>`}});
- const avg=real.length?real.reduce((a,p)=>a+Math.abs(p.e),0)/real.length:null;const bias=real.length?real.reduce((a,p)=>a+p.e,0)/real.length:null;
- let tip;if(!real.length)tip="No complete readings yet.";
- else if(avg>.05&&Math.abs(bias)>.6*avg)tip=`Steady offset: CCR reads ${bias>0?"lower":"higher"} than the field by about ${pct(Math.abs(bias))}. Likely needs a transmitter re-zero or span check.`;
- else if(avg>.05)tip="Large errors that change direction month to month. Check the field measurement method before recalibrating.";
- else if(avg>.02)tip="Mostly close, some months outside ±2%. Keep on watch.";
- else tip="Stable and within tolerance.";
- if(pt.u==="mbar"&&avg>.1)tip+=" On low pressures a small difference gives a big percentage; error as % of instrument span may be fairer.";
- return `<div><span class="eyebrow">Sensor history</span><h3 style="font-size:1.05rem;margin-top:2px">${pt.id} · ${pt.name}</h3></div>
-  <div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${pt.id} error by month">${g}</svg></div>
-  <div class="meta"><span>Avg |error| <b class="num">${pct(avg)}</b></span><span>Bias <b class="num">${pct(bias)}</b></span></div>
-  <div class="note">${tip}</div>`}
-function formPanel(m){
- const d=DATA[m]&&DATA[m].v?DATA[m]:null;const v=d?d.v:POINTS.map(()=>[N,N]);
- const iso=`2026-${String(m).padStart(2,"0")}-${String(d&&d.day?d.day:(m===CUR?NOW.getDate():1)).padStart(2,"0")}`;
- return `<div class="panel"><div class="ph"><div><span class="eyebrow">${d?"Edit":"New"} readings</span><h2>${MONTHS[m-1]} 2026</h2><p class="sub">Results calculate as you type. Leave a field empty if a reading wasn't taken.</p></div>
-  <button class="btn" id="ksdBtn" type="button">Mark as kiln shutdown</button></div>
- <form id="nf" novalidate>
-  <div class="formgrid"><label class="f" for="nf-date">Date<input type="date" id="nf-date" value="${iso}" min="2026-${String(m).padStart(2,"0")}-01" max="2026-${String(m).padStart(2,"0")}-31"></label>
-   <label class="f" for="nf-op">Recorded by<input type="text" id="nf-op" value="${d&&d.op!==XL?esc(d.op):""}" placeholder="e.g. Eng. Ali"></label>
-   <label class="f" for="nf-note">Notes<input type="text" id="nf-note" value="${d?esc(d.note||""):""}" placeholder="Optional"></label></div>
-  <div class="tablewrap"><table><thead><tr><th>Sensor</th><th class="n">Process</th><th class="n">CCR</th><th class="n">Diff.</th><th class="n">Error</th><th>Status</th></tr></thead><tbody>
-  ${POINTS.map((pt,i)=>`<tr><td>${pt.name}<span class="code">${pt.id} · ${pt.u}</span></td>
-   <td><input class="numin" inputmode="decimal" id="p${i}" value="${v[i][0]??""}" aria-label="${pt.name} process"></td>
-   <td><input class="numin" inputmode="decimal" id="c${i}" value="${v[i][1]??""}" aria-label="${pt.name} CCR"></td>
-   <td class="n" id="d${i}">—</td><td class="n" id="e${i}">—</td><td id="s${i}"></td></tr>`).join("")}
-  </tbody></table></div>
-  <div class="row" style="justify-content:space-between;margin-top:14px"><div class="meta" id="nf-sum"></div>
-   <div class="row">${d?`<button type="button" class="btn" id="cancelBtn">Cancel</button>`:""}<button type="submit" class="btn primary">Save ${MONTHS[m-1]}</button></div></div>
-  <p id="nf-err" style="color:var(--bad);font-size:.85rem;margin:8px 0 0" hidden></p>
- </form></div>`}
-function parseIn(t){t=t.trim().replace(",",".");if(t==="")return {v:null,bad:false};const n=Number(t);return isFinite(n)?{v:n,bad:false}:{v:null,bad:true}}
-function readForm(){let bad=false;const v=POINTS.map((_,i)=>{const a=document.getElementById("p"+i),b=document.getElementById("c"+i);const p=parseIn(a.value),c=parseIn(b.value);a.setAttribute("aria-invalid",p.bad);b.setAttribute("aria-invalid",c.bad);if(p.bad||c.bad)bad=true;return [p.v,c.v]});return {v,bad}}
-function liveCalc(){const {v}=readForm();v.forEach(([p,c],i)=>{const r=calc(p,c);const k=r.ok?cls(r.err):"na";document.getElementById("d"+i).textContent=r.ok?fmt(r.diff):"—";document.getElementById("e"+i).textContent=pct(r.err);document.getElementById("s"+i).innerHTML=`<span class="pill p-${k}">${TXT[k]}</span>`});
- const s=summary(v);document.getElementById("nf-sum").innerHTML=`<span>Calculated <b>${s.n}/12</b></span><span>Accuracy <b class="num">${pct(s.acc)}</b></span><span>Calibrate <b>${s.bad}</b></span>`}
-function bindMonth(m){
- const eb=document.getElementById("editBtn");if(eb)eb.addEventListener("click",()=>{UI.edit=true;if(DATA[m]&&DATA[m].ksd){delete DATA[m]}renderSensors()});
- document.querySelectorAll("tr.pick").forEach(r=>{const f=()=>{UI.sensor=+r.dataset.i;document.querySelectorAll("tr.pick").forEach(x=>x.setAttribute("aria-current",x===r));document.getElementById("sensorSide").innerHTML=sensorSide()};r.addEventListener("click",f);r.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();f()}})});
- const form=document.getElementById("nf");if(!form)return;
- form.addEventListener("input",liveCalc);liveCalc();
- const cb=document.getElementById("cancelBtn");if(cb)cb.addEventListener("click",()=>{UI.edit=false;renderSensors()});
- document.getElementById("ksdBtn").addEventListener("click",()=>{DATA[m]={ksd:true,op:"—"};save();UI.edit=false;renderSensors();toast(MONTHS[m-1]+" marked as kiln shutdown")});
- form.addEventListener("submit",e=>{e.preventDefault();const err=document.getElementById("nf-err");const {v,bad}=readForm();const op=document.getElementById("nf-op").value.trim();const date=document.getElementById("nf-date").value;
-  const msg=!op?"Enter who recorded the readings.":bad?"Some fields contain text instead of a number. Correct them or leave them empty.":summary(v).n===0?"Enter both readings for at least one sensor.":"";
-  if(msg){err.textContent=msg;err.hidden=false;return}
-  const day=date?Number(date.split("-")[2]):null;DATA[m]={day,op,note:document.getElementById("nf-note").value.trim(),v};save();UI.edit=false;UI.sensor=null;renderSensors();toast(MONTHS[m-1]+" saved")});
-}
+/* =================== MODULE 1: critical sensors =================== */
+const POINTS=[
+ {id:"SAT",en:"Secondary air temp",ar:"حرارة الهواء الثانوي",u:"°C"},{id:"TAT",en:"Tertiary air temp",ar:"حرارة الهواء الثالثي",u:"°C"},
+ {id:"P20",en:"ID fan inlet press",ar:"ضغط مدخل مروحة السحب",u:"mbar"},{id:"T04",en:"PH outlet temp",ar:"حرارة مخرج المسخّن",u:"°C"},
+ {id:"P04",en:"PH outlet press",ar:"ضغط مخرج المسخّن",u:"mbar"},{id:"T33",en:"Kiln inlet temp",ar:"حرارة مدخل الفرن",u:"°C"},
+ {id:"P05",en:"Kiln inlet pressure",ar:"ضغط مدخل الفرن",u:"mbar"},{id:"T11",en:"Material temp left",ar:"حرارة المادة يسار",u:"°C"},
+ {id:"T12",en:"Material temp right",ar:"حرارة المادة يمين",u:"°C"},{id:"T09",en:"Gas outlet temp left",ar:"حرارة مخرج الغاز يسار",u:"°C"},
+ {id:"T10",en:"Gas outlet temp right",ar:"حرارة مخرج الغاز يمين",u:"°C"},{id:"CLK",en:"Clinker temp",ar:"حرارة الكلنكر",u:"°C"}];
+const pName=p=>tx(p.en,p.ar);
+const SSEED={
+ 1:{op:XLKEY,v:[[1080,1090],[682,675],[-61,-60],[446,432],[-58,-51],[1052,980],[-5,-3],[814,824],[850,856],[880,870],[915,900],[100,50]]},
+ 2:{op:XLKEY,v:[[1066,1089],[734,687],[-61,-62],[450,448],[-56,-59],[1044,1048],[-7,-6],[861,860],[881,885],[888,895],[902,900],[N,N]]},
+ 3:{ksd:true,op:XLKEY},
+ 4:{day:19,op:XLKEY,v:[[1098,1100],[822,819],[-66.8,-62],[441,439],[-61.18,-59],[1073,990],[-6,N],[846,842],[844,848],[883,900],[871,882],[164,155]]},
+ 5:{op:XLKEY,v:[[1212,1188],[744,750],[-63,-62],[435.2,440],[-58,-59],[1111,920],[-7,-5.9],[866,853],[865,847],[899,878],[902,905],[N,N]]},
+ 6:{op:XLKEY,v:[[1214,1180],[634,650],[-61,-62],[424,420],[-58,-57],[1085,999],[-6,-4.5],[827,834],[848,850],[885,865],[896,900],[N,N]]},
+ 7:{day:14,op:XLKEY,v:[[1190,1192],[N,N],[-56,N],[412,411],[-51,-47],[1064,980],[-6,-3.5],[848,846],[846,856],[899,878],[902,905],[N,N]]},
+ 8:{op:XLKEY,v:[[677,675],[1064,1085],[-56.8,-56],[426,430],[-53.2,-51],[1032,922],[-5,-5],[848,858],[869,871.5],[842,871],[903,884],[N,N]]},
+ 9:{op:XLKEY,v:[[1016,1023],[641,660],[-54,-55],[428,422],[-52,-49],[1064,980],[-4.54,-6],[848,844],[845,846],[851,853],[842,844],[N,N]]}};
+const SKEY="kcml-v2-sensors";
+let SD=store.get(SKEY,null)||JSON.parse(JSON.stringify(SSEED));
+const NOW=new Date();const CUR=NOW.getFullYear()===2026?NOW.getMonth()+1:(NOW.getFullYear()>2026?13:0);
+const SUI={month:null,sensor:null,edit:false};
+function scalc(p,c){const a=avg(p),b=avg(c);if(a==null||b==null||a===0)return {ok:false,diff:null,err:null};const d=a-b;return {ok:true,diff:d,err:d/a}}
+const scls=e=>e==null?"na":Math.abs(e)<=.02?"ok":Math.abs(e)<=.05?"warn":"bad";
+const acls=a=>a==null?"na":a>=.98?"ok":a>=.95?"warn":"bad";
+const SST=()=>({ok:tx("In tolerance","ضمن الحد"),warn:tx("Watch","مراقبة"),bad:tx("Calibrate","تحتاج معايرة"),na:tx("Missing","ناقصة")});
+function ssum(v,signed){const e=v.map(([p,c])=>scalc(p,c)).filter(r=>r.ok).map(r=>r.err);if(!e.length)return {acc:null,n:0,ok:0,warn:0,bad:0};
+ const a=signed?e.reduce((s,x)=>s+x,0)/e.length:e.reduce((s,x)=>s+Math.abs(x),0)/e.length;const c={ok:0,warn:0,bad:0};e.forEach(x=>c[scls(x)]++);return {acc:1-a,n:e.length,...c}}
+const sdone=()=>Object.keys(SD).map(Number).filter(m=>SD[m]&&SD[m].v).sort((a,b)=>a-b);
+const snext=()=>{for(let m=1;m<=Math.min(12,CUR);m++)if(!SD[m])return m;return null};
+const smLabel=m=>(SD[m]&&SD[m].day?SD[m].day+" ":"")+mName(m)+" 2026";
+function sflags(m,i){const out=[];const v=SD[m].v;const [p,c]=v[i];const pa=avg(p),ca=avg(c);
+ if(i===0&&pa!=null&&avg(v[1][0])!=null&&pa<avg(v[1][0]))out.push(tx("Lower than TAT; SAT and TAT may be swapped","أقل من حرارة الهواء الثالثي؛ قد تكون القيمتان مبدّلتين"));
+ if(i===1&&pa!=null&&avg(v[0][0])!=null&&pa>avg(v[0][0]))out.push(tx("Higher than SAT; SAT and TAT may be swapped","أعلى من حرارة الهواء الثانوي؛ قد تكون القيمتان مبدّلتين"));
+ if(pa!=null&&ca!=null){const d=sdone().find(k=>k<m&&avg(SD[k].v[i][0])===pa&&avg(SD[k].v[i][1])===ca);if(d)out.push(tx(`Same as ${mShort(d)}; check it wasn't copied`,`مطابقة لقراءة ${mName(d)}؛ تأكد أنها ليست منسوخة`))}
+ if((pa==null)!==(ca==null))out.push(tx("One reading missing","إحدى القراءتين ناقصة"));
+ [[p,tx("Field","الميدانية")],[c,"CCR"]].forEach(([x,lab])=>{const sp=spread(x),a=avg(x);if(sp!=null&&a&&sp/Math.abs(a)>.02)out.push(tx(`${lab} readings vary by ${raw(sp)} (${(sp/Math.abs(a)*100).toFixed(1)}%)`,`قراءات ${lab} متفاوتة بمقدار ${raw(sp)} (${(sp/Math.abs(a)*100).toFixed(1)}%)`))});
+ return out}
 
-/* ===== GAS ANALYZERS CROSS CHECK ===== */
+/* =================== MODULE 2: gas analyzers =================== */
 const GPOINTS=[
- {loc:"Kiln inlet",gas:"O₂",k:"o2",u:"%"},{loc:"Kiln inlet",gas:"CO",k:"ppm",u:"ppm"},{loc:"Kiln inlet",gas:"NOx",k:"ppm",u:"ppm"},
- {loc:"Preheater",gas:"O₂",k:"o2",u:"%"},{loc:"Preheater",gas:"CO",k:"ppm",u:"ppm"},{loc:"Preheater",gas:"NOx",k:"ppm",u:"ppm"},
- {loc:"Bypass",gas:"O₂",k:"o2",u:"%"},{loc:"Bypass",gas:"CO",k:"ppm",u:"ppm"},
- {loc:"After waste gas fan",gas:"O₂",k:"o2",u:"%"},{loc:"After waste gas fan",gas:"CO",k:"ppm",u:"ppm"},
- {loc:"Main stack",gas:"O₂",k:"o2",u:"%"},{loc:"Main stack",gas:"CO",k:"ppm",u:"ppm"}];
+ {loc:["Kiln inlet","مدخل الفرن"],gas:"O₂",k:"o2",u:"%"},{loc:["Kiln inlet","مدخل الفرن"],gas:"CO",k:"ppm",u:"ppm"},{loc:["Kiln inlet","مدخل الفرن"],gas:"NOx",k:"ppm",u:"ppm"},
+ {loc:["Preheater","المسخّن الأولي"],gas:"O₂",k:"o2",u:"%"},{loc:["Preheater","المسخّن الأولي"],gas:"CO",k:"ppm",u:"ppm"},{loc:["Preheater","المسخّن الأولي"],gas:"NOx",k:"ppm",u:"ppm"},
+ {loc:["Bypass","البايباس"],gas:"O₂",k:"o2",u:"%"},{loc:["Bypass","البايباس"],gas:"CO",k:"ppm",u:"ppm"},
+ {loc:["After waste gas fan","بعد مروحة الغازات"],gas:"O₂",k:"o2",u:"%"},{loc:["After waste gas fan","بعد مروحة الغازات"],gas:"CO",k:"ppm",u:"ppm"},
+ {loc:["Main stack","المدخنة الرئيسية"],gas:"O₂",k:"o2",u:"%"},{loc:["Main stack","المدخنة الرئيسية"],gas:"CO",k:"ppm",u:"ppm"}];
+const gLoc=p=>tx(p.loc[0],p.loc[1]);const gpn=p=>gLoc(p)+" · "+p.gas;
 const E12=()=>GPOINTS.map(()=>[N,N]);
 const GSEED=[
- {id:"g1",m:1,day:18,op:XL,xl:.75,note:"Sheet has no readings for this round but still shows 75% accuracy.",v:E12()},
- {id:"g2",m:2,op:XL,xl:.91,v:[[3.8,3.6],[0.001,0.001],[491,502],[1.8,1.2],[0.014,0.011],[158,141],[17,16.8],[1,1],[5.8,5],[1600,1800],[13.2,12.8],[1000,473]]},
- {id:"g3",m:3,op:XL,xl:.64,v:[[2.9,4.5],[1030,1000],[500,550],[1.3,0.8],[810,1100],[163,172],[18,17],[1,1],[5.4,4.54],[1480,1100],[10.4,9.7],[609,700]]},
- {id:"g4",m:4,op:XL,xl:.87,v:[[2.7,3.1],[166,200],[230,250],[2,1.37],[310,330],[102,112],[19,18],[1,1],[5.8,4.95],[1476,1200],[10.5,10],[670,300]]},
- {id:"g5",m:5,op:XL,xl:.96,note:"Main stack CO was recorded in mg/m³ in this round, ppm in all others.",v:[[1.82,1.95],[7,8],[180,225],[2.95,2.44],[2411,2390],[148,58],[18,17],[1,1],[6.84,6.27],[1967,1940],[13.2,13.4],[980,908]]},
- {id:"g6",m:5,r2:true,op:XL,xl:.97,note:"Untitled block between May and June in the sheet, shown as a second May round.",v:[[3.3,3.2],[5,4],[530,560],[0.07,0.06],[3300,100],[105,99],[20,18],[1,1],[5.5,5],[1444,1280],[12.9,12],[480,305]]},
- {id:"g7",m:6,op:XL,xl:.77,v:[[3.27,3.23],[1,1],[623,706],[0.65,0.35],[1213,1480],[179,0],[20.1,16],[1,1],[6.09,5.7],[1494,1670],[14.13,14.32],[1046,534]]},
- {id:"g8",m:7,op:XL,xl:null,v:[[2.78,2.74],[1,0],[350,456],[N,N],[N,N],[N,N],[N,N],[N,N],[N,N],[N,N],[13.6,13.03],[584,302]]},
- {id:"g9",m:8,day:17,op:XL,xl:.70,note:"In the sheet the Diff. column has the wrong sign on the kiln inlet O₂ and NOx rows.",v:[[3.31,3.4],[1,1],[241,310],[0.71,0.3],[2232,2110],[141,140],[20.47,0],[1,1],[5.13,4.72],[2164,2070],[15.77,14.85],[917,523]]},
- {id:"g10",m:9,op:XL,xl:.94,v:[[5.24,5.56],[1,1],[808,527],[1.61,1.05],[2235,2330],[216,62],[20.44,N],[1,1],[5.35,5.05],[1758,1840],[14,13.5],[910,469]]}
-];
-const GKEY="kcml-gas-demo-v1";
-function gload(){try{const s=JSON.parse(localStorage.getItem(GKEY)||"null");if(Array.isArray(s)&&s.length)return s}catch(e){}return JSON.parse(JSON.stringify(GSEED))}
-function gsave(){try{localStorage.setItem(GKEY,JSON.stringify(GDATA))}catch(e){}}
-let GDATA=gload();const GUI={round:null,pt:null,form:null};
-const gLabel=r=>(r.day?r.day+" ":"")+MS[r.m-1]+(r.r2?" (2nd)":"");
+ {id:"g1",m:1,day:18,op:XLKEY,xl:.75,note:["Sheet has no readings for this round but still shows 75% accuracy.","لا توجد قراءات لهذه الجولة في الملف، ومع ذلك يُظهر دقة 75%."],v:E12()},
+ {id:"g2",m:2,op:XLKEY,xl:.91,v:[[3.8,3.6],[0.001,0.001],[491,502],[1.8,1.2],[0.014,0.011],[158,141],[17,16.8],[1,1],[5.8,5],[1600,1800],[13.2,12.8],[1000,473]]},
+ {id:"g3",m:3,op:XLKEY,xl:.64,note:["The sheet's average error uses only the first row of the table.","معادلة متوسط الخطأ في الملف تأخذ الصف الأول فقط."],v:[[2.9,4.5],[1030,1000],[500,550],[1.3,0.8],[810,1100],[163,172],[18,17],[1,1],[5.4,4.54],[1480,1100],[10.4,9.7],[609,700]]},
+ {id:"g4",m:4,op:XLKEY,xl:.87,note:["The sheet's average error uses only the first row of the table.","معادلة متوسط الخطأ في الملف تأخذ الصف الأول فقط."],v:[[2.7,3.1],[166,200],[230,250],[2,1.37],[310,330],[102,112],[19,18],[1,1],[5.8,4.95],[1476,1200],[10.5,10],[670,300]]},
+ {id:"g5",m:5,op:XLKEY,xl:.96,note:["Main stack CO was recorded in mg/m³ in this round, ppm in all others.","سُجّل CO المدخنة بوحدة mg/m³ في هذه الجولة، وبـ ppm في البقية."],v:[[1.82,1.95],[7,8],[180,225],[2.95,2.44],[2411,2390],[148,58],[18,17],[1,1],[6.84,6.27],[1967,1940],[13.2,13.4],[980,908]]},
+ {id:"g6",m:5,r2:true,op:XLKEY,xl:.97,note:["Untitled block between May and June in the sheet, shown as a second May round.","كتلة بلا عنوان بين أيار وحزيران في الملف، معروضة كجولة ثانية لأيار."],v:[[3.3,3.2],[5,4],[530,560],[0.07,0.06],[3300,100],[105,99],[20,18],[1,1],[5.5,5],[1444,1280],[12.9,12],[480,305]]},
+ {id:"g7",m:6,op:XLKEY,xl:.77,v:[[3.27,3.23],[1,1],[623,706],[0.65,0.35],[1213,1480],[179,0],[20.1,16],[1,1],[6.09,5.7],[1494,1670],[14.13,14.32],[1046,534]]},
+ {id:"g8",m:7,op:XLKEY,xl:null,v:[[2.78,2.74],[1,0],[350,456],[N,N],[N,N],[N,N],[N,N],[N,N],[N,N],[N,N],[13.6,13.03],[584,302]]},
+ {id:"g9",m:8,day:17,op:XLKEY,xl:.70,note:["In the sheet the Diff. column has the wrong sign on the kiln inlet O₂ and NOx rows.","في الملف إشارة عمود الفرق معكوسة في صفي O₂ وNOx لمدخل الفرن."],v:[[3.31,3.4],[1,1],[241,310],[0.71,0.3],[2232,2110],[141,140],[20.47,0],[1,1],[5.13,4.72],[2164,2070],[15.77,14.85],[917,523]]},
+ {id:"g10",m:9,op:XLKEY,xl:.94,v:[[5.24,5.56],[1,1],[808,527],[1.61,1.05],[2235,2330],[216,62],[20.44,N],[1,1],[5.35,5.05],[1758,1840],[14,13.5],[910,469]]}];
+const GKEY="kcml-v2-gas";
+let GD=store.get(GKEY,null)||JSON.parse(JSON.stringify(GSEED));
+const GUI={round:null,pt:null,form:null};
+const gYear=r=>r.y||2024;
+const gLabel=r=>(r.day?r.day+" ":"")+mShort(r.m)+(r.r2?" (2)":"");
+const gLabelLong=r=>(r.day?r.day+" ":"")+mName(r.m)+" "+gYear(r)+(r.r2?tx(" · 2nd round"," · الجولة الثانية"):"");
 function gtol(pt,p){if(pt.k==="o2")return [.5,1];return [Math.max(.10*Math.abs(p),20),Math.max(.20*Math.abs(p),40)]}
-function gtolText(pt){return pt.k==="o2"?"±0.5 vol%":"±10% or ±20 ppm"}
-function gstat(pt,p,c){if(!isNum(p)||!isNum(c))return {k:"na",diff:null,err:null};const diff=p-c;const [a,b]=gtol(pt,p);const d=Math.abs(diff);
- return {k:d<=a?"ok":d<=b?"warn":"bad",diff,err:p!==0?diff/p:null}}
-function gsum(r){const st=r.v.map((x,i)=>gstat(GPOINTS[i],...x)).filter(s=>s.k!=="na");const c={ok:0,warn:0,bad:0};st.forEach(s=>c[s.k]++);
- return {n:st.length,...c,rel:st.length?c.ok/st.length:null}}
-function relCls(x){if(x==null)return "na";return x>=.85?"ok":x>=.6?"warn":"bad"}
-const ptName=pt=>pt.loc+" "+pt.gas;
-function gflags(ri,i){const r=GDATA[ri];const pt=GPOINTS[i];const [p,c]=r.v[i];const out=[];
- if(isNum(p)&&c===0&&p>2)out.push("CCR reads 0: signal lost or analyzer off?");
- if(pt.k==="o2"&&isNum(p)&&p>=20)out.push("Field O₂ is close to air (20.9%): probe may be leaking or blocked");
- if(isNum(p)!==isNum(c))out.push("One reading missing");
+const gtolText=pt=>pt.k==="o2"?"±0.5 vol%":tx("±10% or ±20 ppm","±10% أو ±20 ppm");
+function gstat(pt,p,c){const a=avg(p),b=avg(c);if(a==null||b==null)return {k:"na",diff:null,err:null};const diff=a-b;const [t1,t2]=gtol(pt,a);const d=Math.abs(diff);
+ return {k:d<=t1?"ok":d<=t2?"warn":"bad",diff,err:a!==0?diff/a:null}}
+function gsum(r){const st=r.v.map((x,i)=>gstat(GPOINTS[i],...x)).filter(s=>s.k!=="na");const c={ok:0,warn:0,bad:0};st.forEach(s=>c[s.k]++);return {n:st.length,...c,rel:st.length?c.ok/st.length:null}}
+const rcls=x=>x==null?"na":x>=.85?"ok":x>=.6?"warn":"bad";
+const GST=()=>({ok:tx("OK","سليمة"),warn:tx("Borderline","على الحد"),bad:tx("Out","خارج الحد"),na:tx("Missing","ناقصة")});
+function gflags(r,i){const pt=GPOINTS[i];const [p,c]=r.v[i];const a=avg(p),b=avg(c);const out=[];
+ if(a!=null&&b===0&&a>2)out.push(tx("CCR reads 0: signal lost or analyzer off?","غرفة التحكم تقرأ 0: إشارة مفقودة أو المحلل متوقف؟"));
+ if(pt.k==="o2"&&a!=null&&a>=20)out.push(tx("Field O₂ is close to air (20.9%): probe may be leaking or blocked","أكسجين القراءة الميدانية قريب من الهواء (20.9%): قد يكون المجس يسرّب أو مسدوداً"));
+ if((a==null)!==(b==null))out.push(tx("One reading missing","إحدى القراءتين ناقصة"));
+ [[p,tx("Field","الميدانية")],[c,"CCR"]].forEach(([x,lab])=>{const sp=spread(x);if(sp!=null){const [t1]=gtol(pt,avg(x));if(sp>t1)out.push(tx(`${lab} readings vary by ${raw(sp)} ${pt.u}`,`قراءات ${lab} متفاوتة بمقدار ${raw(sp)} ${pt.u}`))}});
  return out}
 function gfindings(){const out=[];
- GPOINTS.forEach((pt,i)=>{
-  const air=GDATA.filter(r=>pt.k==="o2"&&isNum(r.v[i][0])&&r.v[i][0]>=19.5);
-  if(air.length>=3)out.push({s:"bad",t:`${ptName(pt)} reads like ambient air`,d:`Field O₂ was 19.5% or higher in ${air.length} rounds (${air.map(gLabel).join(", ")}). Air is 20.9%, so the sample line is likely drawing in air. Check the probe and filter before trusting this analyzer.`});
-  const flat=GDATA.filter(r=>r.v[i][0]===1&&r.v[i][1]===1);
-  if(flat.length>=4)out.push({s:"warn",t:`${ptName(pt)} shows 1 ppm every round`,d:`Both field and CCR read exactly 1 ppm in ${flat.length} rounds. A value that never moves usually means a saturated cell or a reading below the analyzer range, so this check proves nothing about accuracy.`});
-  const ratio=GDATA.filter(r=>{const [p,c]=r.v[i];return pt.k==="ppm"&&isNum(p)&&isNum(c)&&c>0&&p/c>1.6&&p/c<2.4});
-  if(ratio.length>=3)out.push({s:"bad",t:`${ptName(pt)}: field reads about twice the CCR`,d:`In ${ratio.length} rounds (${ratio.map(gLabel).join(", ")}) the field value is 1.6 to 2.4 times the CCR value. A steady ratio like this points to a units or O₂-reference correction mismatch (ppm vs mg/m³, dry vs corrected), not random error.`});
-  const zero=GDATA.filter(r=>isNum(r.v[i][0])&&r.v[i][1]===0&&r.v[i][0]>2);
-  if(zero.length)out.push({s:"bad",t:`${ptName(pt)}: CCR showed 0`,d:`In ${zero.map(gLabel).join(", ")} the CCR read 0 while the field analyzer read ${zero.map(r=>r.v[i][0]).join(", ")} ${pt.u}. The sheet counted this as a 100% error; it is more likely a lost signal.`});
- });
- const lowO2=GDATA.filter(r=>{const [p,c]=r.v[3];return isNum(p)&&isNum(c)&&p<1.5&&Math.abs((p-c)/p)>.3});
- if(lowO2.length)out.push({s:"warn",t:"Percent error is misleading at low O₂",d:`Preheater O₂ is often below 1.5%, so a 0.4 vol% difference shows as 50–137% error in the sheet. This system judges O₂ by absolute difference (±0.5 vol%) instead.`});
+ GPOINTS.forEach((pt,i)=>{const name=gpn(pt);
+  const air=GD.filter(r=>pt.k==="o2"&&avg(r.v[i][0])!=null&&avg(r.v[i][0])>=19.5);
+  if(air.length>=3)out.push({s:"bad",t:tx(`${name} reads like ambient air`,`${name} يقرأ كأنه هواء جوي`),d:tx(`Field O₂ was 19.5% or higher in ${air.length} rounds (${air.map(gLabel).join(", ")}). Air is 20.9%, so the sample line is likely drawing in air. Check the probe and filter before trusting this analyzer.`,`كان الأكسجين الميداني 19.5% أو أكثر في ${air.length} جولات (${air.map(gLabel).join("، ")}). الهواء 20.9%، فالأرجح أن خط السحب يسحب هواءً. افحص المجس والفلتر قبل الاعتماد على هذا المحلل.`)});
+  const flat=GD.filter(r=>avg(r.v[i][0])===1&&avg(r.v[i][1])===1);
+  if(flat.length>=4)out.push({s:"warn",t:tx(`${name} shows 1 ppm every round`,`${name} يُظهر 1 ppm في كل جولة`),d:tx(`Field and CCR both read exactly 1 ppm in ${flat.length} rounds. A value that never moves usually means a saturated cell or a reading below range, so this check proves nothing about accuracy.`,`القراءتان الميدانية وغرفة التحكم تساوي 1 ppm تماماً في ${flat.length} جولات. القيمة التي لا تتغير تعني غالباً خلية مشبعة أو قراءة دون مدى الجهاز، فلا يثبت هذا الفحص شيئاً عن الدقة.`)});
+  const ratio=GD.filter(r=>{const a=avg(r.v[i][0]),b=avg(r.v[i][1]);return pt.k==="ppm"&&a!=null&&b>0&&a/b>1.6&&a/b<2.4});
+  if(ratio.length>=3)out.push({s:"bad",t:tx(`${name}: field reads about twice the CCR`,`${name}: القراءة الميدانية ضعف غرفة التحكم تقريباً`),d:tx(`In ${ratio.length} rounds (${ratio.map(gLabel).join(", ")}) the field value is 1.6 to 2.4 times the CCR value. A steady ratio points to a units or O₂-reference mismatch (ppm vs mg/m³, dry vs corrected), not random error.`,`في ${ratio.length} جولات (${ratio.map(gLabel).join("، ")}) كانت القيمة الميدانية بين 1.6 و2.4 ضعف قيمة غرفة التحكم. النسبة الثابتة تشير إلى عدم تطابق في الوحدات أو تصحيح الأكسجين المرجعي (ppm مقابل mg/m³)، لا إلى خطأ عشوائي.`)});
+  const zero=GD.filter(r=>avg(r.v[i][0])>2&&avg(r.v[i][1])===0);
+  if(zero.length)out.push({s:"bad",t:tx(`${name}: CCR showed 0`,`${name}: غرفة التحكم أظهرت 0`),d:tx(`In ${zero.map(gLabel).join(", ")} the CCR read 0 while the field read ${zero.map(r=>raw(avg(r.v[i][0]))).join(", ")} ${pt.u}. The sheet counted it as a 100% error; it is more likely a lost signal.`,`في ${zero.map(gLabel).join("، ")} قرأت غرفة التحكم 0 بينما القراءة الميدانية ${zero.map(r=>raw(avg(r.v[i][0]))).join("، ")} ${pt.u}. احتسبها الملف خطأ 100%، والأرجح أنها إشارة مفقودة.`)})});
+ const low=GD.filter(r=>{const a=avg(r.v[3][0]),b=avg(r.v[3][1]);return a!=null&&b!=null&&a<1.5&&Math.abs((a-b)/a)>.3});
+ if(low.length)out.push({s:"warn",t:tx("Percent error is misleading at low O₂","النسبة المئوية مضللة عند الأكسجين المنخفض"),d:tx("Preheater O₂ is often below 1.5%, so a 0.4 vol% difference shows as 50–137% error in the sheet. This system judges O₂ by absolute difference (±0.5 vol%) instead.","أكسجين المسخّن غالباً أقل من 1.5%، ففرق 0.4% فقط يظهر في الملف كخطأ بين 50% و137%. لذلك يحكم النظام على الأكسجين بالفرق المطلق (±0.5 vol%).")});
  return out}
 
-function gStrip(){return `<div class="chips">${GDATA.map((r,ri)=>{const s=gsum(r);const c=s.n?relCls(s.rel):"empty";
- return `<button class="mo ${c}" data-g="${ri}" aria-current="${GUI.round===ri&&!GUI.form}"><span class="m">${MS[r.m-1]}${r.r2?" ²":""}</span><span class="v">${s.n?pct(s.rel,0):"Empty"}</span></button>`}).join("")}
- <button class="mo add" id="gAdd" aria-current="${GUI.form==="new"}"><span class="m">New</span><span class="v">+ Round</span></button></div>`}
+/* =================== MODULE 3: ID fan efficiency =================== */
+const FAN={id:"idfa",name:["ID Fan · Line FA","مروحة السحب · خط FA"],control:"VSD",nmax:950,pInst:2300,rhoRef:.54,tRef:400,pRef:915.89,dustRef:.075,elev:150,cls:3,instr:"Prandtl",acc:.10,meas:"vsd",
+ eff:{tr:.99,vsd:.975,cab:.995,mot:.965,cpl:1},
+ pc:[[1.565,9202.9],[14.765,9420.3],[35.589,9613.5],[51.338,9661.8],[73.188,9661.8],[90.47,9541.1],[110.296,9372],[131.141,9154.6],[146.904,8937.2],[165.719,8647.3],[181.996,8309.2],[199.802,7898.6],[215.065,7512.1],[228.806,7101.4],[248.657,6425.1]],
+ wc:[[1.294,382.4],[14.362,528.5],[26.468,648.8],[36.15,752],[49.231,868],[63.763,1001.2],[76.356,1121.5],[95.735,1293.4],[113.19,1418],[128.699,1542.6],[149.555,1675.8],[167.494,1804.7],[193.696,1946.5],[214.563,2053.9],[229.129,2109.8]]};
+const FFIELDS=[
+ ["n","Fan speed","سرعة المروحة","rpm"],["pin","Static pressure, fan inlet","الضغط الساكن عند مدخل المروحة","mbar"],["tin","Gas temperature, fan inlet","حرارة الغاز عند مدخل المروحة","°C"],
+ ["pout","Static pressure, fan outlet","الضغط الساكن عند مخرج المروحة","mbar"],["tout","Gas temperature, fan outlet","حرارة الغاز عند مخرج المروحة","°C"],
+ ["q","Measured flow (fan inlet)","التدفق المقاس (مدخل المروحة)","m³/h"],["pw","Power at VSD","القدرة عند المغيّر (VSD)","kW"],["dust","Dust concentration","تركيز الغبار","kg/m³"],
+ ["o2","O₂","O₂","vol%"],["co2","CO₂","CO₂","vol%"],["h2o","H₂O","H₂O","vol%"],["prod","Clinker production","إنتاج الكلنكر","t/d"]];
+const FSEED=[{id:"f1",date:"2026-06-15",dayKnown:false,op:XLKEY,note:["Values from the June 2026 Fan Efficiency Tool (rev 1.54). Flow measured with a Prandtl tube.","القيم من أداة كفاءة المراوح لشهر حزيران 2026 (الإصدار 1.54). التدفق مقاس بأنبوب برانتل."],
+ in:{n:874,pin:-63.28,tin:361.4,pout:-6.2,tout:400,q:679760,pw:1558.2,dust:.05,o2:6,co2:0,h2o:4,prod:3300}}];
+const FKEY="kcml-v2-fan";
+let FD=store.get(FKEY,null)||JSON.parse(JSON.stringify(FSEED));
+const FUI={test:null,form:null};
+function interp(pts,x){for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1];if((x-a[0])*(x-b[0])<=0&&a[0]!==b[0])return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0])}return null}
+function fcalc(t){const F=FAN;const g=k=>avg(t.in[k]);
+ const n=g("n"),pin=g("pin"),tin=g("tin"),pout=g("pout"),q=g("q"),pw=g("pw"),dust=g("dust")??0,prod=g("prod");
+ const o2=(g("o2")??0)/100,co2=(g("co2")??0)/100,h2o=(g("h2o")??0)/100;
+ if([n,pin,tin,pout,q,pw].some(x=>x==null))return null;
+ const pamb=1013*Math.pow(1-F.elev/44300,5.25);const n2=1-o2-co2-h2o;
+ const rho=(o2*32+co2*44+h2o*18+n2*28)*((pamb+pin)/1013)/(0.082*(tin+273));
+ const dp=pout-pin;const r=n/F.nmax;const dr=rho/F.rhoRef;
+ const pcA=F.pc.map(([x,y])=>[x*3600*r,y/100*dr*r*r]);
+ let qth=null;for(let i=pcA.length-1;i>0;i--){const a=pcA[i-1],b=pcA[i];if((dp-a[1])*(dp-b[1])<=0&&a[1]!==b[1]){qth=a[0]+(b[0]-a[0])*(dp-a[1])/(b[1]-a[1]);break}}
+ const dustF=(1+dust/rho)/(1+F.dustRef/F.rhoRef);
+ const wcA=F.wc.map(([x,y])=>[x*3600*r,y*dr*dustF*r*r*r]);
+ const pthD=qth==null?null:interp(wcA,qth);if(qth==null||pthD==null)return null;const pth=pthD==null?null:pthD/(1+dust/rho);
+ const e=F.eff;const shaft=pw*e.cab*e.mot*e.cpl;
+ const effA=(q/3600)*dp/(10*shaft)*100*(1+dust/rho);
+ const effT=qth!=null&&pth?(qth/3600)*dp/(10*pth)*100:null;
+ const qn=q*((pamb+pin)/1013)*(273/(tin+273));
+ return {pamb,rho,dp,r,pcA,wcA,qth,pthD,pth,shaft,effA,effMin:effA*(1-F.acc),effMax:effA*(1+F.acc),effT,dEff:effT!=null?effA-effT:null,
+  dPow:pthD?(shaft/pthD-1)*100:null,dFlow:qth?(q/qth-1)*100:null,qn,spec:prod?qn*24/(prod*1000):null,toutEst:(tin+273)*Math.pow((pamb+pin)/(pamb+pout),-0.4/1.4)-273,q,n,motorIn:pw*e.cab,load:pw*e.cab/F.pInst}}
+const ecls=d=>d==null?"na":d>=-5?"ok":d>=-10?"warn":"bad";
+const powcls=d=>d==null?"na":d<=5?"ok":d<=10?"warn":"bad";
+const fsorted=()=>[...FD].sort((a,b)=>a.date.localeCompare(b.date));
+function fLabel(t){const [y,m,d]=t.date.split("-").map(Number);return (t.dayKnown===false?"":d+" ")+mName(m)+" "+y}
+function fShort(t){const [y,m,d]=t.date.split("-").map(Number);return (t.dayKnown===false?"":d+" ")+mShort(m)+" "+String(y).slice(2)}
+function fverdict(c){if(!c)return tx("Enter speed, pressures, inlet temperature, flow and power to calculate. Δp must fall on the fan curve.","أدخل السرعة والضغوط وحرارة المدخل والتدفق والقدرة لإجراء الحساب. يجب أن يقع Δp ضمن منحنى المروحة.");
+ const parts=[];
+ if(c.dEff!=null&&c.dEff<-5)parts.push(tx(`The fan runs about ${Math.abs(c.dEff).toFixed(0)} points below the efficiency its curve promises at this pressure.`,`المروحة تعمل بكفاءة أقل بنحو ${Math.abs(c.dEff).toFixed(0)} ${(n=>n>=3&&n<=10?"نقاط":"نقطة")(Math.round(Math.abs(c.dEff)))} مما يعد به منحناها عند هذا الضغط.`));
+ else parts.push(tx("Efficiency is close to the supplier curve.","الكفاءة قريبة من منحنى المورّد."));
+ if(c.dFlow!=null&&c.dFlow<0)parts.push(tx(`It moves ${Math.abs(c.dFlow).toFixed(1)}% less gas than the curve predicts while drawing ${c.dPow>0?"+":""}${c.dPow.toFixed(1)}% power, which points to impeller wear or build-up, or inlet losses.`,`وتسحب غازاً أقل بنسبة ${Math.abs(c.dFlow).toFixed(1)}% مما يتوقعه المنحنى بينما قدرتها ${c.dPow>0?"أعلى":"أقل"} بنسبة ${Math.abs(c.dPow).toFixed(1)}%، وهذا يشير إلى تآكل أو ترسّبات على الدوّار، أو فواقد عند المدخل.`));
+ if(FAN.acc>=.1)parts.push(tx("With a Prandtl tube (±10%) the efficiency could be anywhere from "+c.effMin.toFixed(0)+"% to "+c.effMax.toFixed(0)+"%; a more accurate flow measurement would narrow this.","مع أنبوب برانتل (±10%) قد تتراوح الكفاءة بين "+c.effMin.toFixed(0)+"% و"+c.effMax.toFixed(0)+"%؛ وقياس تدفق أدق يضيّق هذا المدى."));
+ return parts.join(" ")}
 
-function renderGas(){
- if(GUI.round==null||!GDATA[GUI.round])GUI.round=GDATA.length-1;
- const F=gfindings();
- document.getElementById("app").innerHTML=`
- <nav class="crumbs"><a href="#">← Home</a> / Instruments &amp; analyzers / <span style="color:var(--fg)">Gas analyzers cross check</span></nav>
- <section class="panel">
-  <div class="ph"><div><span class="eyebrow">5 analyzers · 12 readings per round</span><h2>Gas analyzers cross check</h2><p class="sub">Reliability = share of readings within tolerance. Green ≥ 85%, amber 60–85%, red below 60%. Dates in the imported sheet are from 2024.</p></div></div>
-  ${gStrip()}
- </section>
- <section id="gPanel">${GUI.form?gForm():gRound()}</section>
- <section class="panel"><div class="ph"><div><span class="eyebrow">Found automatically</span><h2>What the data shows</h2><p class="sub">Patterns across all rounds that a single monthly sheet hides</p></div></div>
-  <div class="findings">${F.map(f=>`<div class="finding"><span class="ic ${f.s}">!</span><b>${f.t}</b><p>${f.d}</p></div>`).join("")}</div></section>`;
- document.querySelectorAll("[data-g]").forEach(b=>b.addEventListener("click",()=>{GUI.round=+b.dataset.g;GUI.form=null;GUI.pt=null;renderGas()}));
- document.getElementById("gAdd").addEventListener("click",()=>{GUI.form="new";renderGas()});
- bindGas();
-}
-function gRound(){
- const ri=GUI.round;const r=GDATA[ri];const s=gsum(r);
- if(GUI.pt==null){let w=0,wv=-1;r.v.forEach((x,i)=>{const st=gstat(GPOINTS[i],...x);const sc=st.k==="bad"?2:st.k==="warn"?1:0;if(st.k!=="na"&&sc>wv){wv=sc;w=i}});GUI.pt=w}
- let lastLoc="";
- const rows=GPOINTS.map((pt,i)=>{const [p,c]=r.v[i];const st=gstat(pt,p,c);const newLoc=pt.loc!==lastLoc;lastLoc=pt.loc;
-  return `<tr class="pick ${newLoc&&i?"gstart":""} ${st.k==="na"?"excl":""}" data-i="${i}" tabindex="0" aria-current="${GUI.pt===i}">
-  <td class="loc">${newLoc?pt.loc:""}</td><td>${pt.gas} <span class="code">${pt.u}</span>${gflags(ri,i).map(f=>`<span class="flag">⚠ ${esc(f)}</span>`).join("")}</td>
-  <td class="n">${fmt(p)}</td><td class="n">${fmt(c)}</td><td class="n">${st.diff==null?"—":fmt(st.diff)}</td><td class="n">${pct(st.err,0)}</td>
-  <td style="color:var(--muted);font-size:.8rem;white-space:nowrap">${gtolText(pt)}</td><td><span class="pill p-${st.k}">${TXT[st.k]==="Calibrate"?"Out":TXT[st.k]==="In tolerance"?"OK":TXT[st.k]}</span></td></tr>`}).join("");
- const rc=relCls(s.rel);
- return `<div class="panel">
-  <div class="ph"><div><span class="eyebrow">Cross check round</span><h2>${gLabel(r)} 2024</h2><div class="meta" style="margin-top:4px"><span>Recorded by <b>${esc(r.op)}</b></span></div></div>
-   <button class="btn" id="gEdit">Edit readings</button></div>
-  ${r.note?`<div class="note" style="margin-bottom:14px">${esc(r.note)}</div>`:""}
-  ${s.n?`<div class="kpis" style="margin-bottom:16px">
-   <div class="kpi"><div class="k">Reliability</div><div class="v" style="color:var(--${rc==="na"?"muted":rc})">${pct(s.rel,0)}</div><div class="h">${s.ok} of ${s.n} readings within tolerance</div></div>
-   <div class="kpi"><div class="k">Out of tolerance</div><div class="v" style="color:var(--bad)">${s.bad}</div><div class="h">${s.warn} borderline</div></div>
-   <div class="kpi"><div class="k">Not measured</div><div class="v">${12-s.n}</div><div class="h">of 12 readings</div></div>
-   <div class="kpi"><div class="k">Old Excel sheet said</div><div class="v" style="color:var(--muted)">${r.xl==null?"—":pct(r.xl,0)}</div><div class="h">Formula used only part of the table</div></div>
-  </div>`:""}
-  <div class="split">
-   <div class="tablewrap"><table><thead><tr><th>Location</th><th>Gas</th><th class="n">Field</th><th class="n">CCR</th><th class="n">Diff.</th><th class="n">Error</th><th>Tolerance</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>
-   <aside class="side" id="gSide">${gSide()}</aside>
-  </div>
-  <p class="sub" style="margin-top:10px">O₂ is judged by absolute difference; CO and NOx by percent with a 20 ppm floor, so near-zero readings don't inflate the error. Demo tolerances: the team sets the real ones.</p>
- </div>`}
-function gSide(){
- const i=GUI.pt;const pt=GPOINTS[i];const o2=pt.k==="o2";
- const pts=GDATA.map((r,ri)=>{const [p,c]=r.v[i];const st=gstat(pt,p,c);return {ri,r,st,y:st.k==="na"?null:(o2?st.diff:st.err)}});
- const real=pts.filter(x=>x.y!=null);const band=o2?.5:.10;
- let lim=Math.max(band*3,...real.map(x=>Math.abs(x.y)));lim=o2?Math.ceil(lim*2)/2:Math.ceil(lim*10)/10;if(!o2&&lim>2)lim=2;
- const W=320,H=180,L=44,R=8,T=14,B=28;const x=k=>L+(pts.length<2?(W-L-R)/2:k*(W-L-R)/(pts.length-1));const y=v=>T+(lim-Math.max(-lim,Math.min(lim,v)))/(2*lim)*(H-T-B);
- const lab=v=>o2?(v>0?"+":"")+v.toFixed(1):Math.round(v*100)+"%";
- let g=`<rect x="${L}" y="${y(band)}" width="${W-L-R}" height="${y(-band)-y(band)}" fill="var(--ok)" opacity=".12"/>`;
- [lim,0,-lim].forEach(t=>{g+=`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" ${t===0?'stroke-width="1.5"':''}/><text x="${L-6}" y="${y(t)+4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono,monospace">${lab(t)}</text>`});
- let d="",st=true;pts.forEach((p,k)=>{if(p.y==null){st=true;return}d+=(st?"M":"L")+x(k)+" "+y(p.y)+" ";st=false});
+/* =================== charts =================== */
+function niceTicks(lo,hi,n=5){const span=hi-lo||1;const step0=span/n;const mag=Math.pow(10,Math.floor(Math.log10(step0)));const s=[1,2,2.5,5,10].map(k=>k*mag).find(k=>k>=step0)||10*mag;
+ const out=[];for(let v=Math.ceil(lo/s)*s;v<=hi+1e-9;v+=s)out.push(Math.round(v/s)*s);return {ticks:out,lo:Math.floor(lo/s)*s,hi:Math.ceil(hi/s)*s}}
+function lineChart({W=320,H=180,xs,ys,labels,band,cur,fmtY,clampAbs}){
+ const L0=44,R0=10,T0=14,B0=28;const real=ys.filter(v=>v!=null);let lim=Math.max(band*3,...real.map(Math.abs));if(clampAbs)lim=Math.min(lim,clampAbs);
+ const nt=niceTicks(-lim,lim,4);lim=Math.max(Math.abs(nt.lo),Math.abs(nt.hi));
+ const x=k=>L0+(xs.length<2?(W-L0-R0)/2:k*(W-L0-R0)/(xs.length-1));const y=v=>T0+(lim-Math.max(-lim,Math.min(lim,v)))/(2*lim)*(H-T0-B0);
+ let g=`<rect x="${L0}" y="${y(band)}" width="${W-L0-R0}" height="${y(-band)-y(band)}" fill="var(--ok)" opacity=".12"/>`;
+ [lim,0,-lim].forEach(t=>{g+=`<line x1="${L0}" x2="${W-R0}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" ${t===0?'stroke-width="1.5"':''}/><text x="${L0-6}" y="${y(t)+4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono,monospace">${fmtY(t)}</text>`});
+ let d="",st=true;ys.forEach((v,k)=>{if(v==null){st=true;return}d+=(st?"M":"L")+x(k).toFixed(1)+" "+y(v).toFixed(1)+" ";st=false});
  g+=`<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2"/>`;
- pts.forEach((p,k)=>{g+=`<text x="${x(k)}" y="${H-8}" text-anchor="middle" font-size="9.5" fill="${p.ri===GUI.round?"var(--accent)":"var(--muted)"}" font-weight="${p.ri===GUI.round?600:400}">${MS[p.r.m-1][0]}</text>`;
-  if(p.y!=null){const clipped=Math.abs(p.y)>lim;g+=`<circle cx="${x(k)}" cy="${y(p.y)}" r="${p.ri===GUI.round?5.5:4}" fill="var(--${p.st.k})" stroke="var(--surface)" stroke-width="1.5"/>${clipped?`<text x="${x(k)}" y="${y(p.y)+(p.y>0?-8:14)}" text-anchor="middle" font-size="9" fill="var(--bad)">${lab(p.y)}</text>`:""}`}});
- const c={ok:0,warn:0,bad:0};real.forEach(p=>c[p.st.k]++);
- return `<div><span class="eyebrow">Analyzer history</span><h3 style="font-size:1.05rem;margin-top:2px">${pt.loc} · ${pt.gas}</h3><p class="sub">${o2?"Difference in vol% (band ±0.5)":"Error % (band ±10%); values beyond ±"+Math.round(lim*100)+"% are pinned to the edge"}</p></div>
-  <div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${ptName(pt)} history">${g}</svg></div>
-  <div class="meta"><span>Rounds OK <b>${c.ok}</b></span><span>Borderline <b>${c.warn}</b></span><span>Out <b style="color:var(--bad)">${c.bad}</b></span></div>`}
-function gForm(){
- const editing=GUI.form==="edit";const r=editing?GDATA[GUI.round]:null;const v=r?r.v:E12();
- const today=new Date();const iso=r?`2024-${String(r.m).padStart(2,"0")}-${String(r.day||1).padStart(2,"0")}`:today.toISOString().slice(0,10);
- let lastLoc="";
- return `<div class="panel"><div class="ph"><div><span class="eyebrow">${editing?"Edit":"New"} round</span><h2>${editing?gLabel(r):"Gas analyzers cross check"}</h2><p class="sub">Status updates as you type. Leave a field empty if the reading wasn't taken.</p></div></div>
- <form id="gf" novalidate>
-  <div class="formgrid"><label class="f" for="gf-date">Date<input type="date" id="gf-date" value="${iso}"></label>
-   <label class="f" for="gf-op">Recorded by<input type="text" id="gf-op" value="${r&&r.op!==XL?esc(r.op):""}" placeholder="e.g. Eng. Zahraa"></label></div>
-  <div class="tablewrap"><table><thead><tr><th>Location</th><th>Gas</th><th class="n">Field</th><th class="n">CCR</th><th class="n">Diff.</th><th>Status</th></tr></thead><tbody>
-  ${GPOINTS.map((pt,i)=>{const nl=pt.loc!==lastLoc;lastLoc=pt.loc;return `<tr class="${nl&&i?"gstart":""}"><td class="loc">${nl?pt.loc:""}</td><td>${pt.gas} <span class="code">${pt.u}</span></td>
-   <td><input class="numin" inputmode="decimal" id="gp${i}" value="${v[i][0]??""}" aria-label="${ptName(pt)} field"></td>
-   <td><input class="numin" inputmode="decimal" id="gc${i}" value="${v[i][1]??""}" aria-label="${ptName(pt)} CCR"></td>
-   <td class="n" id="gd${i}">—</td><td id="gs${i}"></td></tr>`}).join("")}
-  </tbody></table></div>
-  <div class="row" style="justify-content:space-between;margin-top:14px"><div class="meta" id="gf-sum"></div>
-   <div class="row"><button type="button" class="btn" id="gCancel">Cancel</button><button type="submit" class="btn primary">Save round</button></div></div>
-  <p id="gf-err" style="color:var(--bad);font-size:.85rem;margin:8px 0 0" hidden></p>
- </form></div>`}
-function gRead(){let bad=false;const v=GPOINTS.map((_,i)=>{const a=document.getElementById("gp"+i),b=document.getElementById("gc"+i);const p=parseIn(a.value),c=parseIn(b.value);a.setAttribute("aria-invalid",p.bad);b.setAttribute("aria-invalid",c.bad);if(p.bad||c.bad)bad=true;return [p.v,c.v]});return {v,bad}}
-function gLive(){const {v}=gRead();v.forEach(([p,c],i)=>{const st=gstat(GPOINTS[i],p,c);document.getElementById("gd"+i).textContent=st.diff==null?"—":fmt(st.diff);
- document.getElementById("gs"+i).innerHTML=`<span class="pill p-${st.k}">${st.k==="ok"?"OK":st.k==="bad"?"Out":TXT[st.k]}</span>`});
- const s=gsum({v});document.getElementById("gf-sum").innerHTML=`<span>Measured <b>${s.n}/12</b></span><span>Reliability <b class="num">${pct(s.rel,0)}</b></span><span>Out <b>${s.bad}</b></span>`}
-function bindGas(){
- const ge=document.getElementById("gEdit");if(ge)ge.addEventListener("click",()=>{GUI.form="edit";renderGas()});
- document.querySelectorAll("#gPanel tr.pick").forEach(r=>{const f=()=>{GUI.pt=+r.dataset.i;document.querySelectorAll("#gPanel tr.pick").forEach(x=>x.setAttribute("aria-current",x===r));document.getElementById("gSide").innerHTML=gSide()};r.addEventListener("click",f);r.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();f()}})});
- const form=document.getElementById("gf");if(!form)return;form.addEventListener("input",gLive);gLive();
+ ys.forEach((v,k)=>{g+=`<text x="${x(k)}" y="${H-8}" text-anchor="middle" font-size="10" fill="${k===cur?"var(--accent)":"var(--muted)"}" font-weight="${k===cur?600:400}">${labels[k]}</text>`;
+  if(v!=null){const c=labels.cls[k];g+=`<circle cx="${x(k)}" cy="${y(v)}" r="${k===cur?5.5:4}" fill="var(--${c})" stroke="var(--surface)" stroke-width="1.5"/>`;if(Math.abs(v)>lim)g+=`<text x="${x(k)}" y="${y(v)+(v>0?-8:15)}" text-anchor="middle" font-size="9" fill="var(--bad)">${fmtY(v)}</text>`}});
+ return `<svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`}
+function xyChart({W=520,H=300,series,points,hline,xlab,ylab,xf,yf}){
+ const L0=56,R0=14,T0=16,B0=42;let xsAll=[],ysAll=[];series.forEach(s=>s.pts.forEach(p=>{xsAll.push(p[0]);ysAll.push(p[1])}));points.forEach(p=>{xsAll.push(p.x*(1+(p.err||0)));xsAll.push(p.x*(1-(p.err||0)));ysAll.push(p.y)});
+ const nx=niceTicks(Math.min(0,...xsAll),Math.max(...xsAll)*1.04,5),ny=niceTicks(Math.min(...ysAll)*.9,Math.max(...ysAll)*1.06,5);
+ const x=v=>L0+(v-nx.lo)/(nx.hi-nx.lo)*(W-L0-R0),y=v=>T0+(ny.hi-v)/(ny.hi-ny.lo)*(H-T0-B0);
+ let g="";ny.ticks.forEach(t=>{g+=`<line x1="${L0}" x2="${W-R0}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${L0-6}" y="${y(t)+4}" text-anchor="end" font-size="10.5" fill="var(--muted)" font-family="IBM Plex Mono,monospace">${yf(t)}</text>`});
+ nx.ticks.forEach(t=>{g+=`<text x="${x(t)}" y="${H-B0+16}" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="IBM Plex Mono,monospace">${xf(t)}</text>`});
+ g+=`<text x="${(L0+W-R0)/2}" y="${H-6}" text-anchor="middle" font-size="11" fill="var(--muted)">${xlab}</text><text x="12" y="${(T0+H-B0)/2}" text-anchor="middle" font-size="11" fill="var(--muted)" transform="rotate(-90 12 ${(T0+H-B0)/2})">${ylab}</text>`;
+ if(hline)g+=`<line x1="${L0}" x2="${W-R0}" y1="${y(hline.y)}" y2="${y(hline.y)}" stroke="var(--muted)" stroke-dasharray="4 4"/><text x="${W-R0}" y="${y(hline.y)-6}" text-anchor="end" font-size="10.5" fill="var(--muted)">${hline.label}</text>`;
+ series.forEach(s=>{g+=`<path d="${s.pts.map((p,i)=>(i?"L":"M")+x(p[0]).toFixed(1)+" "+y(p[1]).toFixed(1)).join(" ")}" fill="none" stroke="${s.color}" stroke-width="2.2" ${s.dash?'stroke-dasharray="6 5"':''}/>`});
+ points.forEach(p=>{if(p.err)g+=`<line x1="${x(p.x*(1-p.err))}" x2="${x(p.x*(1+p.err))}" y1="${y(p.y)}" y2="${y(p.y)}" stroke="${p.color}" stroke-width="2"/><line x1="${x(p.x*(1-p.err))}" x2="${x(p.x*(1-p.err))}" y1="${y(p.y)-5}" y2="${y(p.y)+5}" stroke="${p.color}" stroke-width="2"/><line x1="${x(p.x*(1+p.err))}" x2="${x(p.x*(1+p.err))}" y1="${y(p.y)-5}" y2="${y(p.y)+5}" stroke="${p.color}" stroke-width="2"/>`;
+  g+=`<circle cx="${x(p.x)}" cy="${y(p.y)}" r="6" fill="${p.color}" stroke="var(--surface)" stroke-width="2"/>`;if(p.label)g+=`<text x="${x(p.x)+(p.dx||0)}" y="${y(p.y)+(p.dy||-12)}" text-anchor="${p.anchor||"middle"}" font-size="11" font-weight="600" fill="var(--fg)">${p.label}</text>`});
+ return `<svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`}
+
+/* =================== shared UI bits =================== */
+function multi(id,val,label){const a=arr(val);const vals=a.length?a:[""];
+ return `<div class="multi" data-mi="${id}">${vals.map(v=>`<input class="mi" inputmode="decimal" dir="ltr" value="${v}" aria-label="${esc(label)}">`).join("")}<button type="button" class="addr" data-add="${id}" title="${tx("Add another reading","أضف قراءة أخرى")}" aria-label="${tx("Add another reading","أضف قراءة أخرى")}">+</button><span class="mavg" id="avg-${id}"></span></div>`}
+function readMulti(id){const el=document.querySelector(`[data-mi="${id}"]`);let bad=false;const out=[];
+ el.querySelectorAll("input").forEach(i=>{const t=i.value.trim().replace(",",".");if(!t){i.removeAttribute("aria-invalid");return}const n=Number(t);if(isFinite(n)){out.push(n);i.setAttribute("aria-invalid","false")}else{bad=true;i.setAttribute("aria-invalid","true")}});
+ const v=out.length===0?null:out.length===1?out[0]:out;const ae=document.getElementById("avg-"+id);if(ae)ae.textContent=out.length>1?`x̄ ${raw(avg(out),3)} · n=${out.length}`:"";
+ return {v,bad}}
+function bindAdd(root,onChange){root.addEventListener("click",e=>{const b=e.target.closest("[data-add]");if(!b)return;const inp=document.createElement("input");inp.className="mi";inp.inputMode="decimal";inp.dir="ltr";inp.setAttribute("aria-label",b.previousElementSibling?.getAttribute("aria-label")||"");b.before(inp);inp.focus();onChange&&onChange()})}
+const hintMulti=()=>tx("Enter one or more readings per field with the + button; the average is used. Leave a field empty if no reading was taken.","أدخل قراءة واحدة أو أكثر لكل خانة بزر +، ويُعتمد متوسطها. اترك الخانة فارغة إذا لم تؤخذ قراءة.");
+let tt;function toast(t){const el=document.getElementById("toast");el.textContent=t;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,2400)}
+const crumbs=(a)=>`<nav class="crumbs"><a href="#">${tx("Home","الرئيسية")}</a><span aria-hidden="true">/</span><span>${gName(a.g)}</span><span aria-hidden="true">/</span><span style="color:var(--fg)">${aName(a)}</span></nav>`;
+const actOf=hash=>ALL.find(a=>a.live===hash);
+const app=()=>document.getElementById("app");
+
+/* =================== HOME =================== */
+const ICONS={sensors:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M4 16a8 8 0 1 1 16 0"/><path d="M12 16l4-5"/><circle cx="12" cy="16" r="1.4" fill="var(--accent)"/></svg>`,
+ gas:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6L5 18a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-9V3"/><path d="M7.5 14h9"/></svg>`,
+ fan:`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 10c0-4 1-7 4-7 2 0 3 2 2 4l-4 4"/><path d="M14 12c4 0 7 1 7 4 0 2-2 3-4 2l-4-4"/><path d="M12 14c0 4-1 7-4 7-2 0-3-2-2-4l4-4"/><path d="M10 12c-4 0-7-1-7-4 0-2 2-3 4-2l4 4"/></svg>`};
+function liveStat(h){
+ if(h==="#sensors"){const ds=sdone();const l=ds[ds.length-1];if(!l)return {k:tx("Accuracy","الدقة"),v:"—",c:"na",d:""};const s=ssum(SD[l].v);const nd=snext();
+  return {k:tx("Accuracy · ","الدقة · ")+mName(l),v:pct(s.acc),c:acls(s.acc),d:tx(`${s.bad} sensors need calibration`,`${s.bad} حساسات تحتاج معايرة`)+(nd?` · <b style="color:var(--accent)">${mName(nd)} ${tx("due","مستحق")}</b>`:"")}}
+ if(h==="#gas"){const gl=GD[GD.length-1];const s=gsum(gl);const F=gfindings();return {k:tx("Reliability · ","الموثوقية · ")+gLabel(gl),v:pct(s.rel,0),c:rcls(s.rel),d:tx(`${s.bad} readings out of tolerance · `,`${s.bad} قراءات خارج الحد · `)+`<b style="color:var(--bad)">${F.length} ${tx("issues found","مشاكل مكتشفة")}</b>`}}
+ if(h==="#fan"){const t=fsorted().slice(-1)[0];const c=t?fcalc(t):null;if(!c)return {k:tx("Efficiency","الكفاءة"),v:"—",c:"na",d:""};
+  return {k:tx("Actual efficiency · ","الكفاءة الفعلية · ")+fShort(t),v:ISO(c.effA.toFixed(0)+"%"),c:ecls(c.dEff),d:tx(`Curve expects ${c.effT.toFixed(0)}% · `,`المنحنى يتوقع ${c.effT.toFixed(0)}% · `)+`<b class="c-${ecls(c.dEff)}">${sgn(c.dEff,1)} ${tx("pts","نقطة")}</b>`}}}
+function renderHome(){
+ const hr=new Date().getHours();const greet=hr<12?tx("Good morning","صباح الخير"):hr<18?tx("Good afternoon","مساء الخير"):tx("Good evening","مساء الخير");
+ const live=ALL.filter(a=>a.live);
+ const subs={"#sensors":tx("12 kiln-line sensors · field vs. CCR · monthly","12 حساساً على خط الفرن · الميداني مقابل غرفة التحكم · شهرياً"),"#gas":tx(`5 analyzers · O₂, CO, NOx · ${GD.length} rounds`,`5 محللات · O₂ وCO وNOx · ${GD.length} جولات`),"#fan":tx(`ID fan · line FA · ${FD.length} test${FD.length>1?"s":""}`,`مروحة السحب · خط FA · ${FD.length} ${FD.length>1?"اختبارات":"اختبار"}`)};
+ const ico={"#sensors":ICONS.sensors,"#gas":ICONS.gas,"#fan":ICONS.fan};
+ app().innerHTML=`
+ <section class="hero"><span class="eyebrow">${new Date().toLocaleDateString(L==="ar"?"ar-IQ-u-nu-latn":"en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</span>
+  <h1>${greet}</h1><p>${tx(`${ALL.length} activities in the 2026 Master Plan. Select one to see its readings, record a new round or print its report.`,`${ALL.length} نشاطاً في الخطة الرئيسية لعام 2026. اختر نشاطاً لعرض قراءاته أو تسجيل جولة جديدة أو طباعة تقريره.`)}</p></section>
+ <section><div class="sec-t"><h2>${tx("Active now","الأنشطة الفعّالة")}</h2><span>${tx(`${live.length} activities with readings`,`${live.length} أنشطة فيها قراءات`)}</span></div>
+  <div class="livegrid">${live.map(a=>{const s=liveStat(a.live);return `<a class="tile" href="${a.live}">
+   <div class="top"><div class="ico">${ico[a.live]}</div><div><span class="eyebrow">${gName(a.g)}</span><h3>${aName(a)}</h3><div class="d">${subs[a.live]}</div></div></div>
+   <div class="stat"><div><div class="k">${s.k}</div><div class="v c-${s.c==="na"?"na":s.c}">${s.v}</div><div class="d" style="font-size:.8rem;color:var(--muted)">${s.d}</div></div><span class="go">${tx("Open →","فتح ←")}</span></div></a>`}).join("")}</div></section>
+ ${PLAN.map(g=>({g:g.g,items:ALL.filter(a=>a.g===g.g&&!a.live)})).filter(g=>g.items.length).map(g=>`<section class="agroup"><div class="sec-t"><h2>${gName(g.g)}</h2><span>${tx(`${g.items.length} activities`,`${g.items.length} أنشطة`)}</span></div>
+  <div class="agrid">${g.items.map(a=>`<a class="at" href="#act-${a.slug}"><b>${aName(a)}</b><span class="ft"><span>${tx("Not set up yet","لم يُفعّل بعد")}</span><span aria-hidden="true">${tx("→","←")}</span></span></a>`).join("")}</div></section>`).join("")}`;
+}
+function renderAct(sl){const a=ALL.find(x=>x.slug===sl);if(!a){location.hash="";return}if(a.live){location.hash=a.live.slice(1);return}
+ app().innerHTML=`${crumbs(a)}
+ <div class="mtitle"><div><span class="eyebrow">${gName(a.g)}</span><h1>${aName(a)}</h1><p class="sub" style="max-width:65ch">${tx(a.den,a.dar)}</p></div>${pill("na",tx("Not set up yet","لم يُفعّل بعد"))}</div>
+ <section class="panel"><div class="empty"><h3>${tx("No readings for this activity yet","لا توجد قراءات لهذا النشاط بعد")}</h3><p style="max-width:56ch;margin:0 auto">${tx("This activity is still kept in Excel. Once its sheet is added it gets the same screens as the live activities: entry form, calculations, history, findings and printable reports.","هذا النشاط ما زال في الإكسل. عند إضافة ملفه يحصل على نفس شاشات الأنشطة الفعّالة: نموذج الإدخال والحسابات والسجل والملاحظات والتقارير القابلة للطباعة.")}</p></div></section>
+ <section class="panel"><div class="ph"><div><span class="eyebrow">${tx("What it will include","ما الذي سيتضمنه")}</span><h2>${tx("Once the sheet is added","بعد إضافة الملف")}</h2></div></div>
+  <div class="steps"><div><b>${tx("Entry form","نموذج إدخال")}</b>${tx("Record each round from any device on the plant network, with several readings per field.","تسجيل كل جولة من أي جهاز على شبكة المعمل، مع عدة قراءات لكل خانة.")}</div>
+   <div><b>${tx("Automatic calculations","حسابات تلقائية")}</b>${tx("The sheet's formulas run in the system, the same way every time.","معادلات الملف تعمل داخل النظام بالطريقة نفسها في كل مرة.")}</div>
+   <div><b>${tx("History and trends","السجل والاتجاهات")}</b>${tx("Every round kept in one place, with charts per item.","كل الجولات في مكان واحد مع رسوم لكل بند.")}</div>
+   <div><b>${tx("Reports","التقارير")}</b>${tx("A signed, printable report for each round.","تقرير قابل للطباعة والتوقيع لكل جولة.")}</div></div></section>
+ <div><a class="btn" href="#">${tx("← All activities","→ كل الأنشطة")}</a></div>`}
+
+/* =================== SENSORS screen =================== */
+function sStrip(){return `<div class="strip">${Array.from({length:12},(_,k)=>{const m=k+1;const d=SD[m];let c="",val="—";
+ if(d&&d.ksd){c="ksd";val="KSD"}else if(d&&d.v){const s=ssum(d.v);c=acls(s.acc);val=pct(s.acc)}else if(m<=CUR){c="due";val=m===CUR?tx("Due","مستحق"):tx("Missed","فائت")}else c="future";
+ return `<button type="button" class="mo ${c}" data-m="${m}" ${c==="future"?"disabled":""} aria-current="${SUI.month===m}"><span class="m">${mShort(m)}</span><span class="v">${val}</span></button>`}).join("")}</div>`}
+function renderSensors(){const a=actOf("#sensors");const ds=sdone();if(SUI.month==null)SUI.month=ds[ds.length-1]||snext()||1;const m=SUI.month;const d=SD[m];
+ app().innerHTML=`${crumbs(a)}
+ <div class="mtitle"><div><span class="eyebrow">${tx("2026 · monthly · 12 sensors","2026 · شهري · 12 حساساً")}</span><h1>${aName(a)}</h1></div>
+  <div class="legend">${pill("ok",ISO("≥ 98%"))}${pill("warn",ISO("95–98%"))}${pill("bad",ISO("< 95%"))}</div></div>
+ <section class="panel"><div class="ph"><div><h2>${tx("Select a month","اختر الشهر")}</h2><p class="sub">${tx("Color shows the month's accuracy. Empty past months are due.","اللون يوضح دقة الشهر. الأشهر الفارغة السابقة مستحقة.")}</p></div></div>${sStrip()}</section>
+ <section id="mp">${(!d||SUI.edit)?sForm(m):d.ksd?sKsd(m):sMonth(m)}</section>`;
+ app().querySelectorAll("[data-m]").forEach(b=>b.addEventListener("click",()=>{SUI.month=+b.dataset.m;SUI.edit=false;SUI.sensor=null;renderSensors()}));
+ bindSensors(m)}
+function sKsd(m){return `<div class="panel"><div class="empty"><h3>${mName(m)}: ${tx("kiln shutdown (KSD)","توقف الفرن (KSD)")}</h3><p>${tx("No readings this month. Shutdown months are left out of the averages instead of counting as errors.","لا قراءات في هذا الشهر. أشهر التوقف تُستبعد من المتوسطات بدل احتسابها أخطاء.")}</p><button class="btn" id="editBtn" type="button">${tx("Record readings instead","تسجيل قراءات بدلاً من ذلك")}</button></div></div>`}
+function sMonth(m){const d=SD[m];const s=ssum(d.v),x=ssum(d.v,true);const ds=sdone();const prev=ds.filter(k=>k<m).pop();const ps=prev?ssum(SD[prev].v):null;
+ const delta=ps&&s.acc!=null?(s.acc-ps.acc)*100:null;const ST=SST();
+ if(SUI.sensor==null){let w=0,wv=-1;d.v.forEach(([p,c],i)=>{const r=scalc(p,c);if(r.ok&&Math.abs(r.err)>wv){wv=Math.abs(r.err);w=i}});SUI.sensor=w}
+ const multiN=d.v.reduce((a,[p,c])=>a+(cnt(p)>1?1:0)+(cnt(c)>1?1:0),0);
+ const rows=POINTS.map((pt,i)=>{const [p,c]=d.v[i];const r=scalc(p,c);const k=r.ok?scls(r.err):"na";
+  return `<tr class="pick ${r.ok?"":"excl"}" data-i="${i}" tabindex="0" aria-current="${SUI.sensor===i}"><td>${pName(pt)}<span class="code">${pt.id}</span>${sflags(m,i).map(f=>`<span class="flag">⚠ ${esc(f)}</span>`).join("")}</td>
+  <td class="n">${cell(p)}</td><td class="n">${cell(c)}</td><td class="n">${r.ok?fnum(r.diff):"—"}</td><td class="n">${pct(r.err)}</td><td>${pill(k,ST[k])}</td></tr>`}).join("");
+ return `<div class="panel">
+  <div class="ph"><div><span class="eyebrow">${tx("Monthly readings","القراءات الشهرية")}</span><h2>${smLabel(m)}</h2><div class="meta" style="margin-top:4px"><span>${tx("Recorded by","سجّلها")} <b>${esc(opName(d.op))}</b></span>${d.note?`<span>${tx("Notes","ملاحظات")} <b>${esc(d.note)}</b></span>`:""}${multiN?`<span>${tx(`${multiN} fields with several readings`,`${multiN} خانات فيها عدة قراءات`)}</span>`:""}</div></div>
+   <div class="row"><button class="btn" id="editBtn" type="button">${tx("Edit readings","تعديل القراءات")}</button><button class="btn primary" type="button" data-report="sensors:${m}">${tx("Report","التقرير")}</button></div></div>
+  <div class="kpis" style="margin-bottom:16px">
+   <div class="kpi"><div class="k">${tx("Accuracy","الدقة")}</div><div class="v c-${acls(s.acc)}">${pct(s.acc)}</div><div class="h">${delta==null?tx("First recorded month","أول شهر مسجّل"):sgn(delta,1)+" "+tx("pts vs ","نقطة عن ")+mName(prev)}</div></div>
+   <div class="kpi"><div class="k">${tx("In tolerance (≤ 2%)","ضمن الحد (≤ 2%)")}</div><div class="v">${fnum(s.ok,0)}<small> / ${fnum(s.n,0)}</small></div><div class="h">${tx(`${12-s.n} not measured`,`${12-s.n} غير مقاسة`)}</div></div>
+   <div class="kpi"><div class="k">${tx("Need calibration (> 5%)","تحتاج معايرة (> 5%)")}</div><div class="v c-bad">${fnum(s.bad,0)}</div><div class="h">${tx(`${s.warn} on watch`,`${s.warn} تحت المراقبة`)}</div></div>
+   <div class="kpi"><div class="k">${tx("Old Excel formula","معادلة الإكسل القديمة")}</div><div class="v c-na">${pct(x.acc)}</div><div class="h">${tx("Signed average hides errors","المتوسط بالإشارة يخفي الأخطاء")}</div></div></div>
+  <div class="split"><div class="tablewrap"><table class="tw"><thead><tr><th>${tx("Sensor","الحساس")}</th><th class="n">${tx("Field","الميدانية")}</th><th class="n">CCR</th><th class="n">${tx("Diff.","الفرق")}</th><th class="n">${tx("Error","الخطأ")}</th><th>${tx("Status","الحالة")}</th></tr></thead><tbody>${rows}</tbody></table></div>
+   <aside class="side" id="sSide">${sSide()}</aside></div>
+  <p class="sub" style="margin-top:10px">${tx("Diff. = Field − CCR · Error = Diff. ÷ Field · ×n = number of readings averaged · Select a sensor for its history.","الفرق = الميدانية − غرفة التحكم · الخطأ = الفرق ÷ الميدانية · ×n = عدد القراءات المعتمد متوسطها · اختر حساساً لعرض سجله.")}</p></div>`}
+function sSide(){const i=SUI.sensor;const pt=POINTS[i];const ds=sdone();const errs=ds.map(m=>scalc(...SD[m].v[i]).err);const real=errs.filter(v=>v!=null);
+ const labels=ds.map(mTick);labels.cls=errs.map(scls);
+ const av=real.length?real.reduce((a,v)=>a+Math.abs(v),0)/real.length:null,bias=real.length?real.reduce((a,v)=>a+v,0)/real.length:null;
+ let tip;if(!real.length)tip=tx("No complete readings yet.","لا قراءات مكتملة بعد.");
+ else if(av>.05&&Math.abs(bias)>.6*av)tip=tx(`Steady offset: CCR reads ${bias>0?"lower":"higher"} than the field by about ${(Math.abs(bias)*100).toFixed(1)}%. Likely needs a transmitter re-zero or span check.`,`انحراف ثابت: غرفة التحكم تقرأ ${bias>0?"أقل":"أعلى"} من الميداني بنحو ${(Math.abs(bias)*100).toFixed(1)}%. غالباً يحتاج المرسِل إعادة ضبط الصفر أو المدى.`);
+ else if(av>.05)tip=tx("Large errors that change direction month to month. Check the field measurement method before recalibrating.","أخطاء كبيرة يتغير اتجاهها من شهر لآخر. راجع طريقة القياس الميداني قبل المعايرة.");
+ else if(av>.02)tip=tx("Mostly close, some months outside ±2%. Keep on watch.","قريبة غالباً، مع بعض الأشهر خارج ±2%. تبقى تحت المراقبة.");
+ else tip=tx("Stable and within tolerance.","مستقر وضمن الحد.");
+ if(pt.u==="mbar"&&av>.1)tip+=" "+tx("On low pressures a small difference gives a big percentage; error as % of instrument span may be fairer.","في الضغوط المنخفضة يعطي فرق صغير نسبة كبيرة؛ قد يكون الخطأ كنسبة من مدى الجهاز أعدل.");
+ return `<div><span class="eyebrow">${tx("Sensor history","سجل الحساس")}</span><h3 style="font-size:1.05rem;margin-top:2px">${pt.id} · ${pName(pt)}</h3></div>
+ <div class="chart" dir="ltr">${lineChart({xs:ds,ys:errs,labels,band:.02,cur:ds.indexOf(SUI.month),fmtY:v=>Math.round(v*100)+"%"})}</div>
+ <div class="meta"><span>${tx("Avg |error|","متوسط |الخطأ|")} <b>${pct(av)}</b></span><span>${tx("Bias","الانحياز")} <b>${pct(bias)}</b></span></div><div class="note">${tip}</div>`}
+function sForm(m){const d=SD[m]&&SD[m].v?SD[m]:null;const v=d?d.v:POINTS.map(()=>[N,N]);
+ const iso=`2026-${String(m).padStart(2,"0")}-${String(d&&d.day?d.day:(m===CUR?NOW.getDate():1)).padStart(2,"0")}`;
+ return `<div class="panel"><div class="ph"><div><span class="eyebrow">${d?tx("Edit readings","تعديل القراءات"):tx("New readings","قراءات جديدة")}</span><h2>${mName(m)} 2026</h2><p class="sub" style="max-width:70ch">${hintMulti()}</p></div>
+  <button class="btn" id="ksdBtn" type="button">${tx("Mark as kiln shutdown","تسجيل كتوقف فرن")}</button></div>
+ <form id="sf" novalidate>
+  <div class="formgrid"><label class="f" for="sf-date">${tx("Date","التاريخ")}<input type="date" id="sf-date" value="${iso}" dir="ltr"></label>
+   <label class="f" for="sf-op">${tx("Recorded by","سجّلها")}<input type="text" id="sf-op" value="${d&&d.op!==XLKEY?esc(d.op):""}" placeholder="${tx("e.g. Eng. Ali","مثال: م. علي")}"></label>
+   <label class="f" for="sf-note">${tx("Notes","ملاحظات")}<input type="text" id="sf-note" value="${d?esc(d.note||""):""}" placeholder="${tx("Optional","اختياري")}"></label></div>
+  <div class="tablewrap"><table class="tw"><thead><tr><th>${tx("Sensor","الحساس")}</th><th class="n">${tx("Field readings","القراءات الميدانية")}</th><th class="n">${tx("CCR readings","قراءات غرفة التحكم")}</th><th class="n">${tx("Diff.","الفرق")}</th><th class="n">${tx("Error","الخطأ")}</th><th>${tx("Status","الحالة")}</th></tr></thead><tbody>
+  ${POINTS.map((pt,i)=>`<tr><td>${pName(pt)}<span class="code"><bdi dir="ltr">${pt.id} · ${pt.u}</bdi></span></td><td class="n">${multi("p"+i,v[i][0],pName(pt)+" "+tx("field","ميداني"))}</td><td class="n">${multi("c"+i,v[i][1],pName(pt)+" CCR")}</td>
+   <td class="n" id="d${i}">—</td><td class="n" id="e${i}">—</td><td id="s${i}"></td></tr>`).join("")}</tbody></table></div>
+  <div class="row between" style="margin-top:14px"><div class="meta" id="sf-sum"></div><div class="row">${d?`<button type="button" class="btn" id="cancelBtn">${tx("Cancel","إلغاء")}</button>`:""}<button type="submit" class="btn primary">${tx("Save","حفظ")} ${mName(m)}</button></div></div>
+  <p id="sf-err" style="color:var(--bad);font-size:.85rem;margin:8px 0 0" hidden></p></form></div>`}
+function sRead(){let bad=false;const v=POINTS.map((_,i)=>{const p=readMulti("p"+i),c=readMulti("c"+i);if(p.bad||c.bad)bad=true;return [p.v,c.v]});return {v,bad}}
+function sLive(){const {v}=sRead();const ST=SST();v.forEach(([p,c],i)=>{const r=scalc(p,c);const k=r.ok?scls(r.err):"na";document.getElementById("d"+i).innerHTML=r.ok?fnum(r.diff):"—";document.getElementById("e"+i).innerHTML=pct(r.err);document.getElementById("s"+i).innerHTML=pill(k,ST[k])});
+ const s=ssum(v);document.getElementById("sf-sum").innerHTML=`<span>${tx("Calculated","محسوبة")} <b>${s.n}/12</b></span><span>${tx("Accuracy","الدقة")} <b>${pct(s.acc)}</b></span><span>${tx("Calibrate","تحتاج معايرة")} <b>${s.bad}</b></span>`}
+function bindSensors(m){
+ const eb=document.getElementById("editBtn");if(eb)eb.addEventListener("click",()=>{SUI.edit=true;if(SD[m]&&SD[m].ksd)delete SD[m];renderSensors()});
+ document.querySelectorAll("tr.pick").forEach(r=>{const f=()=>{SUI.sensor=+r.dataset.i;document.querySelectorAll("tr.pick").forEach(x=>x.setAttribute("aria-current",x===r));document.getElementById("sSide").innerHTML=sSide()};r.addEventListener("click",f);r.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();f()}})});
+ const form=document.getElementById("sf");if(!form)return;form.addEventListener("input",sLive);bindAdd(form,sLive);sLive();
+ const cb=document.getElementById("cancelBtn");if(cb)cb.addEventListener("click",()=>{SUI.edit=false;renderSensors()});
+ document.getElementById("ksdBtn").addEventListener("click",()=>{SD[m]={ksd:true,op:"—"};store.set(SKEY,SD);SUI.edit=false;renderSensors();toast(tx(`${mName(m)} marked as kiln shutdown`,`سُجّل ${mName(m)} كتوقف فرن`))});
+ form.addEventListener("submit",e=>{e.preventDefault();const err=document.getElementById("sf-err");const {v,bad}=sRead();const op=document.getElementById("sf-op").value.trim();const date=document.getElementById("sf-date").value;
+  const msg=!op?tx("Enter who recorded the readings.","اكتب اسم من سجّل القراءات."):bad?tx("Some fields contain text instead of a number. Correct them or leave them empty.","بعض الخانات فيها نص بدل رقم. صحّحها أو اتركها فارغة."):ssum(v).n===0?tx("Enter field and CCR readings for at least one sensor.","أدخل القراءتين لحساس واحد على الأقل."):"";
+  if(msg){err.textContent=msg;err.hidden=false;return}
+  SD[m]={day:date?Number(date.split("-")[2]):null,op,note:document.getElementById("sf-note").value.trim(),v};store.set(SKEY,SD);SUI.edit=false;SUI.sensor=null;renderSensors();toast(tx("Saved","تم الحفظ"))})}
+
+/* =================== GAS screen =================== */
+function gStrip(withAdd){return `<div class="chips">${GD.map((r,ri)=>{const s=gsum(r);const c=s.n?rcls(s.rel):"empty";
+ return `<button type="button" class="mo ${c}" data-g="${ri}" aria-current="${GUI.round===ri&&!GUI.form}"><span class="m">${gLabel(r)}</span><span class="v">${s.n?pct(s.rel,0):tx("Empty","فارغة")}</span></button>`}).join("")}
+ ${withAdd?`<button type="button" class="mo add" id="gAdd"><span class="m">${tx("New","جديدة")}</span><span class="v">+ ${tx("Round","جولة")}</span></button>`:""}</div>`}
+function renderGas(){const a=actOf("#gas");if(GUI.round==null||!GD[GUI.round])GUI.round=GD.length-1;const F=gfindings();
+ app().innerHTML=`${crumbs(a)}
+ <div class="mtitle"><div><span class="eyebrow">${tx("5 analyzers · 12 readings per round","5 محللات · 12 قراءة في كل جولة")}</span><h1>${aName(a)}</h1></div>
+  <div class="legend">${pill("ok",ISO("≥ 85%"))}${pill("warn",ISO("60–85%"))}${pill("bad",ISO("< 60%"))}</div></div>
+ <section class="panel"><div class="ph"><div><h2>${tx("Select a round","اختر الجولة")}</h2><p class="sub">${tx("Reliability = share of readings within tolerance. Dates in the imported sheet are from 2024.","الموثوقية = نسبة القراءات ضمن الحد المسموح. تواريخ الملف المستورد من عام 2024.")}</p></div></div>${gStrip(true)}</section>
+ <section id="gp">${GUI.form?gForm():gRound()}</section>
+ <section class="panel"><div class="ph"><div><span class="eyebrow">${tx("Found automatically","مكتشفة تلقائياً")}</span><h2>${tx("What the data shows","ماذا تكشف البيانات")}</h2><p class="sub">${tx("Patterns across all rounds that a single monthly sheet hides","أنماط عبر كل الجولات يخفيها الملف الشهري")}</p></div></div>
+  <div class="findings">${F.map(f=>`<div class="finding"><span class="ic ${f.s}">!</span><b>${f.t}</b><p>${f.d}</p></div>`).join("")}</div></section>`;
+ app().querySelectorAll("[data-g]").forEach(b=>b.addEventListener("click",()=>{GUI.round=+b.dataset.g;GUI.form=null;GUI.pt=null;renderGas()}));
+ document.getElementById("gAdd").addEventListener("click",()=>{GUI.form="new";renderGas()});bindGas()}
+function gRound(){const r=GD[GUI.round];const s=gsum(r);const ST=GST();
+ if(GUI.pt==null){let w=0,wv=-1;r.v.forEach((x,i)=>{const st=gstat(GPOINTS[i],...x);const sc=st.k==="bad"?2:st.k==="warn"?1:0;if(st.k!=="na"&&sc>wv){wv=sc;w=i}});GUI.pt=w}
+ let last="";const rows=GPOINTS.map((pt,i)=>{const [p,c]=r.v[i];const st=gstat(pt,p,c);const nl=pt.loc[0]!==last;last=pt.loc[0];
+  return `<tr class="pick ${nl&&i?"gstart":""} ${st.k==="na"?"excl":""}" data-i="${i}" tabindex="0" aria-current="${GUI.pt===i}"><td class="loc">${nl?gLoc(pt):""}</td><td>${pt.gas} <span class="code">${pt.u}</span>${gflags(r,i).map(f=>`<span class="flag">⚠ ${esc(f)}</span>`).join("")}</td>
+  <td class="n">${cell(p,3)}</td><td class="n">${cell(c,3)}</td><td class="n">${st.diff==null?"—":fnum(st.diff,3)}</td><td class="n">${pct(st.err,0)}</td><td style="color:var(--muted);font-size:.8rem;white-space:nowrap">${gtolText(pt)}</td><td>${pill(st.k,ST[st.k])}</td></tr>`}).join("");
+ const note=r.note?(Array.isArray(r.note)?tx(r.note[0],r.note[1]):r.note):"";
+ return `<div class="panel"><div class="ph"><div><span class="eyebrow">${tx("Cross check round","جولة المقارنة")}</span><h2>${gLabelLong(r)}</h2><div class="meta" style="margin-top:4px"><span>${tx("Recorded by","سجّلها")} <b>${esc(opName(r.op))}</b></span></div></div>
+  <div class="row"><button class="btn" id="gEdit" type="button">${tx("Edit readings","تعديل القراءات")}</button><button class="btn primary" type="button" data-report="gas:${GUI.round}">${tx("Report","التقرير")}</button></div></div>
+  ${note?`<div class="note" style="margin-bottom:14px">${esc(note)}</div>`:""}
+  ${s.n?`<div class="kpis" style="margin-bottom:16px">
+   <div class="kpi"><div class="k">${tx("Reliability","الموثوقية")}</div><div class="v c-${rcls(s.rel)}">${pct(s.rel,0)}</div><div class="h">${tx(`${s.ok} of ${s.n} readings within tolerance`,`${s.ok} من ${s.n} قراءة ضمن الحد`)}</div></div>
+   <div class="kpi"><div class="k">${tx("Out of tolerance","خارج الحد")}</div><div class="v c-bad">${fnum(s.bad,0)}</div><div class="h">${tx(`${s.warn} borderline`,`${s.warn} على الحد`)}</div></div>
+   <div class="kpi"><div class="k">${tx("Not measured","غير مقاسة")}</div><div class="v">${fnum(12-s.n,0)}</div><div class="h">${tx("of 12 readings","من 12 قراءة")}</div></div>
+   <div class="kpi"><div class="k">${tx("Old Excel sheet said","ما أظهره الإكسل")}</div><div class="v c-na">${r.xl==null?"—":pct(r.xl,0)}</div><div class="h">${tx("Formula used only part of the table","المعادلة استخدمت جزءاً من الجدول")}</div></div></div>`:""}
+  <div class="split"><div class="tablewrap"><table class="tw" style="min-width:720px"><thead><tr><th>${tx("Location","الموقع")}</th><th>${tx("Gas","الغاز")}</th><th class="n">${tx("Field","الميدانية")}</th><th class="n">CCR</th><th class="n">${tx("Diff.","الفرق")}</th><th class="n">${tx("Error","الخطأ")}</th><th>${tx("Tolerance","الحد المسموح")}</th><th>${tx("Status","الحالة")}</th></tr></thead><tbody>${rows}</tbody></table></div>
+   <aside class="side" id="gSide">${gSide()}</aside></div>
+  <p class="sub" style="margin-top:10px">${tx("O₂ is judged by absolute difference; CO and NOx by percent with a 20 ppm floor. Demo tolerances: the team sets the real ones.","يُحكم على الأكسجين بالفرق المطلق، وعلى CO وNOx بالنسبة مع حد أدنى 20 ppm. الحدود تجريبية ويحددها الفريق.")}</p></div>`}
+function gSide(){const i=GUI.pt;const pt=GPOINTS[i];const o2=pt.k==="o2";const stats=GD.map(r=>gstat(pt,...r.v[i]));const ys=stats.map(s=>s.k==="na"?null:(o2?s.diff:s.err));
+ const labels=GD.map(r=>mTick(r.m));labels.cls=stats.map(s=>s.k);const c={ok:0,warn:0,bad:0};stats.forEach(s=>{if(s.k!=="na")c[s.k]++});
+ return `<div><span class="eyebrow">${tx("Analyzer history","سجل المحلل")}</span><h3 style="font-size:1.05rem;margin-top:2px">${gpn(pt)}</h3><p class="sub">${o2?tx("Difference in vol% (band ±0.5)","الفرق بوحدة vol% (النطاق ±0.5)"):tx("Error % (band ±10%)","الخطأ % (النطاق ±10%)")}</p></div>
+ <div class="chart" dir="ltr">${lineChart({xs:GD,ys,labels,band:o2?.5:.1,cur:GUI.round,clampAbs:o2?null:2,fmtY:v=>o2?(v>0?"+":"")+v.toFixed(1):Math.round(v*100)+"%"})}</div>
+ <div class="meta"><span>${tx("OK","سليمة")} <b>${c.ok}</b></span><span>${tx("Borderline","على الحد")} <b>${c.warn}</b></span><span>${tx("Out","خارج الحد")} <b class="c-bad">${c.bad}</b></span></div>`}
+function gForm(){const ed=GUI.form==="edit";const r=ed?GD[GUI.round]:null;const v=r?r.v:E12();
+ const iso=r?`${gYear(r)}-${String(r.m).padStart(2,"0")}-${String(r.day||1).padStart(2,"0")}`:NOW.toISOString().slice(0,10);let last="";
+ return `<div class="panel"><div class="ph"><div><span class="eyebrow">${ed?tx("Edit round","تعديل الجولة"):tx("New round","جولة جديدة")}</span><h2>${ed?gLabelLong(r):aName(actOf("#gas"))}</h2><p class="sub" style="max-width:70ch">${hintMulti()}</p></div></div>
+ <form id="gf" novalidate><div class="formgrid"><label class="f" for="gf-date">${tx("Date","التاريخ")}<input type="date" id="gf-date" value="${iso}" dir="ltr"></label>
+  <label class="f" for="gf-op">${tx("Recorded by","سجّلها")}<input type="text" id="gf-op" value="${r&&r.op!==XLKEY?esc(r.op):""}" placeholder="${tx("e.g. Eng. Zahraa","مثال: م. زهراء")}"></label></div>
+ <div class="tablewrap"><table class="tw"><thead><tr><th>${tx("Location","الموقع")}</th><th>${tx("Gas","الغاز")}</th><th class="n">${tx("Field readings","القراءات الميدانية")}</th><th class="n">${tx("CCR readings","قراءات غرفة التحكم")}</th><th class="n">${tx("Diff.","الفرق")}</th><th>${tx("Status","الحالة")}</th></tr></thead><tbody>
+ ${GPOINTS.map((pt,i)=>{const nl=pt.loc[0]!==last;last=pt.loc[0];return `<tr class="${nl&&i?"gstart":""}"><td class="loc">${nl?gLoc(pt):""}</td><td>${pt.gas} <span class="code">${pt.u}</span></td><td class="n">${multi("gp"+i,v[i][0],gpn(pt))}</td><td class="n">${multi("gc"+i,v[i][1],gpn(pt)+" CCR")}</td><td class="n" id="gd${i}">—</td><td id="gs${i}"></td></tr>`}).join("")}
+ </tbody></table></div>
+ <div class="row between" style="margin-top:14px"><div class="meta" id="gf-sum"></div><div class="row"><button type="button" class="btn" id="gCancel">${tx("Cancel","إلغاء")}</button><button type="submit" class="btn primary">${tx("Save round","حفظ الجولة")}</button></div></div>
+ <p id="gf-err" style="color:var(--bad);font-size:.85rem;margin:8px 0 0" hidden></p></form></div>`}
+function gRead(){let bad=false;const v=GPOINTS.map((_,i)=>{const p=readMulti("gp"+i),c=readMulti("gc"+i);if(p.bad||c.bad)bad=true;return [p.v,c.v]});return {v,bad}}
+function gLive(){const {v}=gRead();const ST=GST();v.forEach(([p,c],i)=>{const st=gstat(GPOINTS[i],p,c);document.getElementById("gd"+i).innerHTML=st.diff==null?"—":fnum(st.diff,3);document.getElementById("gs"+i).innerHTML=pill(st.k,ST[st.k])});
+ const s=gsum({v});document.getElementById("gf-sum").innerHTML=`<span>${tx("Measured","مقاسة")} <b>${s.n}/12</b></span><span>${tx("Reliability","الموثوقية")} <b>${pct(s.rel,0)}</b></span><span>${tx("Out","خارج الحد")} <b>${s.bad}</b></span>`}
+function bindGas(){const ge=document.getElementById("gEdit");if(ge)ge.addEventListener("click",()=>{GUI.form="edit";renderGas()});
+ document.querySelectorAll("#gp tr.pick").forEach(r=>{const f=()=>{GUI.pt=+r.dataset.i;document.querySelectorAll("#gp tr.pick").forEach(x=>x.setAttribute("aria-current",x===r));document.getElementById("gSide").innerHTML=gSide()};r.addEventListener("click",f);r.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();f()}})});
+ const form=document.getElementById("gf");if(!form)return;form.addEventListener("input",gLive);bindAdd(form,gLive);gLive();
  document.getElementById("gCancel").addEventListener("click",()=>{GUI.form=null;renderGas()});
  form.addEventListener("submit",e=>{e.preventDefault();const err=document.getElementById("gf-err");const {v,bad}=gRead();const op=document.getElementById("gf-op").value.trim();const date=document.getElementById("gf-date").value;
-  const msg=!date?"Choose the date.":!op?"Enter who recorded the readings.":bad?"Some fields contain text instead of a number. Correct them or leave them empty.":gsum({v}).n===0?"Enter both readings for at least one analyzer.":"";
+  const msg=!date?tx("Choose the date.","اختر التاريخ."):!op?tx("Enter who recorded the readings.","اكتب اسم من سجّل القراءات."):bad?tx("Some fields contain text instead of a number. Correct them or leave them empty.","بعض الخانات فيها نص بدل رقم. صحّحها أو اتركها فارغة."):gsum({v}).n===0?tx("Enter both readings for at least one analyzer.","أدخل القراءتين لمحلل واحد على الأقل."):"";
+  if(msg){err.textContent=msg;err.hidden=false;return}const [yy,mm,dd]=date.split("-").map(Number);
+  if(GUI.form==="edit")Object.assign(GD[GUI.round],{v,op,m:mm,day:dd,y:yy});else{GD.push({id:"g"+Date.now(),m:mm,day:dd,y:yy,op,xl:null,v});GUI.round=GD.length-1}
+  store.set(GKEY,GD);GUI.form=null;GUI.pt=null;renderGas();toast(tx("Saved","تم الحفظ"))})}
+
+/* =================== FAN screen =================== */
+function renderFan(){const a=actOf("#fan");const ts=fsorted();if(!FUI.test||!FD.find(t=>t.id===FUI.test))FUI.test=ts[ts.length-1]?.id;
+ app().innerHTML=`${crumbs(a)}
+ <div class="mtitle"><div><span class="eyebrow">${tx("Fan efficiency vs. supplier curve","كفاءة المروحة مقارنة بمنحنى المورّد")}</span><h1>${tx(FAN.name[0],FAN.name[1])}</h1></div>
+  <div class="legend">${pill("ok",tx("within 5 pts","ضمن 5 نقاط"))}${pill("warn",ISO("5–10"))}${pill("bad",tx("> 10 pts below","أقل بأكثر من 10"))}</div></div>
+ <section class="panel"><div class="ph"><div><h2>${tx("Select a test","اختر الاختبار")}</h2><p class="sub">${tx("Each test shows the measured efficiency; color shows the gap to the supplier curve.","كل اختبار يعرض الكفاءة المقاسة، واللون يوضح الفرق عن منحنى المورّد.")}</p></div></div>
+  <div class="chips">${ts.map(t=>{const c=fcalc(t);return `<button type="button" class="mo ${c?ecls(c.dEff):"empty"}" data-f="${t.id}" aria-current="${FUI.test===t.id&&!FUI.form}"><span class="m">${fShort(t)}</span><span class="v">${c?ISO(c.effA.toFixed(0)+"%"):"—"}</span></button>`}).join("")}
+  <button type="button" class="mo add" id="fAdd"><span class="m">${tx("New","جديد")}</span><span class="v">+ ${tx("Test","اختبار")}</span></button></div></section>
+ <section id="fp">${FUI.form?fForm():fTest()}</section>
+ <section class="panel"><details class="cfg"><summary><span><span class="eyebrow">${tx("Fixed for this fan","ثابتة لهذه المروحة")}</span><br>${tx("Fan data and supplier curves","بيانات المروحة ومنحنيات المورّد")}</span></summary><div style="margin-top:12px">${fCfg()}</div></details></section>`;
+ app().querySelectorAll("[data-f]").forEach(b=>b.addEventListener("click",()=>{FUI.test=b.dataset.f;FUI.form=null;renderFan()}));
+ document.getElementById("fAdd").addEventListener("click",()=>{FUI.form="new";renderFan()});bindFan()}
+function fCfg(){const F=FAN,e=F.eff;const rows=[
+ [tx("Control","التحكم"),F.control],[tx("Max speed","السرعة القصوى"),fnum(F.nmax,0)+" rpm"],[tx("Installed motor power","قدرة المحرك المركّبة"),fnum(F.pInst,0)+" kW"],
+ [tx("Reference gas density","كثافة الغاز المرجعية"),fnum(F.rhoRef,3)+" kg/m³"],[tx("Reference temperature","الحرارة المرجعية"),fnum(F.tRef,0)+" °C"],[tx("Reference pressure (abs)","الضغط المرجعي (مطلق)"),fnum(F.pRef,1)+" mbar"],
+ [tx("Reference dust","الغبار المرجعي"),fnum(F.dustRef,3)+" kg/m³"],[tx("Plant elevation","ارتفاع الموقع"),fnum(F.elev,0)+" m"],[tx("Fan accuracy class (DIN 24166)","فئة دقة المروحة (DIN 24166)"),String(F.cls)],
+ [tx("Flow measurement","قياس التدفق"),F.instr+" ±"+(F.acc*100)+"%"],[tx("Power measured at","مكان قياس القدرة"),"VSD"],
+ [tx("Efficiency: transformer / VSD","الكفاءة: المحوّلة / المغيّر"),pct(e.tr,1)+" / "+pct(e.vsd,1)],[tx("Efficiency: cable / motor / coupling","الكفاءة: الكابل / المحرك / الوصلة"),pct(e.cab,1)+" / "+pct(e.mot,1)+" / "+pct(e.cpl,0)],
+ [tx("Supplier curves","منحنيات المورّد"),tx(`1 curve at ${F.nmax} rpm, ${F.pc.length} points`,`منحنى واحد عند ${F.nmax} rpm، ${F.pc.length} نقطة`)]];
+ return `<div class="dl">${rows.map(r=>`<div><span>${r[0]}</span><span>${r[1]}</span></div>`).join("")}</div><p class="sub" style="margin-top:10px">${tx("Values from the Holcim Fan Efficiency Tool rev. 1.54 used by the team.","القيم من أداة Holcim لكفاءة المراوح (الإصدار 1.54) التي يستخدمها الفريق.")}</p>`}
+function fTest(){const t=FD.find(x=>x.id===FUI.test);if(!t)return `<div class="panel empty"><h3>${tx("No tests yet","لا اختبارات بعد")}</h3></div>`;const c=fcalc(t);
+ const note=t.note?(Array.isArray(t.note)?tx(t.note[0],t.note[1]):t.note):"";
+ const head=`<div class="ph"><div><span class="eyebrow">${tx("Efficiency test","اختبار الكفاءة")}</span><h2>${fLabel(t)}</h2><div class="meta" style="margin-top:4px"><span>${tx("Recorded by","سجّلها")} <b>${esc(opName(t.op))}</b></span></div></div>
+  <div class="row"><button class="btn" id="fEdit" type="button">${tx("Edit readings","تعديل القراءات")}</button>${c?`<button class="btn primary" type="button" data-report="fan:${t.id}">${tx("Report","التقرير")}</button>`:""}</div></div>${note?`<div class="note" style="margin-bottom:14px">${esc(note)}</div>`:""}`;
+ if(!c)return `<div class="panel">${head}<div class="note">${fverdict(null)}</div></div>`;
+ const ek=ecls(c.dEff),pk=powcls(c.dPow);
+ const meas=FFIELDS.map(([k,en,ar,u])=>`<tr><td>${tx(en,ar)}</td><td class="n">${cell(t.in[k],k==="q"||k==="prod"?0:2)}</td><td><bdi dir="ltr">${u}</bdi></td></tr>`).join("");
+ const calc=[[tx("Ambient pressure","الضغط الجوي"),fnum(c.pamb,1),"mbar"],[tx("Actual gas density","كثافة الغاز الفعلية"),fnum(c.rho,4),"kg/m³"],[tx("Fan pressure rise Δp","ارتفاع ضغط المروحة Δp"),fnum(c.dp,2),"mbar"],
+  [tx("Shaft power (measured)","قدرة العمود (مقاسة)"),fnum(c.shaft,1),"kW"],[tx("Motor load","حمل المحرك"),pct(c.load,0),tx("of installed","من المركّبة")],
+  [tx("Flow from curve at Δp","التدفق من المنحنى عند Δp"),fnum(c.qth,0),"m³/h"],[tx("Shaft power from curve (with dust)","قدرة العمود من المنحنى (مع الغبار)"),fnum(c.pthD,1),"kW"],
+  [tx("Normalized flow","التدفق المعياري"),fnum(c.qn,0),"Nm³/h"],[tx("Specific gas flow","التدفق النوعي للغاز"),fnum(c.spec,3),"Nm³/kg cl"],[tx("Outlet temperature (estimated)","حرارة المخرج (تقديرية)"),fnum(c.toutEst,1),"°C"]];
+ const curveP=xyChart({series:[{pts:c.pcA.map(p=>[p[0]/1000,p[1]]),color:"var(--accent)"}],
+  points:[{x:c.qth/1000,y:c.dp,color:"var(--muted)",label:tx("Curve","المنحنى"),dy:-12},{x:c.q/1000,y:c.dp,color:`var(--${ek})`,label:tx("Measured","المقاس"),dy:22,err:FAN.acc}],
+  hline:{y:c.dp,label:"Δp "+raw(c.dp,1)+" mbar"},xlab:tx("Flow (1000 m³/h)","التدفق (1000 m³/h)"),ylab:"Δp (mbar)",xf:v=>raw(v,0),yf:v=>raw(v,0)});
+ const curveW=xyChart({series:[{pts:c.wcA.map(p=>[p[0]/1000,p[1]]),color:"var(--accent)"}],
+  points:[{x:c.qth/1000,y:c.pthD,color:"var(--muted)",label:tx("Curve","المنحنى"),dy:22,anchor:"start",dx:8},{x:c.q/1000,y:c.shaft,color:`var(--${pk})`,label:tx("Measured","المقاس"),dy:-12,anchor:"end",dx:-8,err:FAN.acc}],
+  xlab:tx("Flow (1000 m³/h)","التدفق (1000 m³/h)"),ylab:tx("Shaft power (kW)","قدرة العمود (kW)"),xf:v=>raw(v,0),yf:v=>raw(v,0)});
+ return `<div class="panel">${head}
+ <div class="kpis" style="margin-bottom:16px">
+  <div class="kpi"><div class="k">${tx("Actual efficiency","الكفاءة الفعلية")}</div><div class="v c-${ek}">${ISO(c.effA.toFixed(1)+"%")}</div><div class="h">${tx("Range with flow accuracy","المدى مع دقة قياس التدفق")} ${ISO(c.effMin.toFixed(0)+"–"+c.effMax.toFixed(0)+"%")}</div></div>
+  <div class="kpi"><div class="k">${tx("Expected (supplier curve)","المتوقعة (منحنى المورّد)")}</div><div class="v">${ISO(c.effT.toFixed(1)+"%")}</div><div class="h">${tx("At the same Δp and speed","عند نفس Δp والسرعة")} ${fnum(c.n,0)} rpm</div></div>
+  <div class="kpi"><div class="k">${tx("Efficiency deviation","انحراف الكفاءة")}</div><div class="v c-${ek}">${sgn(c.dEff,1)}<small> ${tx("pts","نقطة")}</small></div><div class="h">${tx("Class 3: no DIN 24166 limit","الفئة 3: لا حد في DIN 24166")}</div></div>
+  <div class="kpi"><div class="k">${tx("Power deviation","انحراف القدرة")}</div><div class="v c-${pk}">${sgn(c.dPow,1,"%")}</div><div class="h">${tx("Measured shaft vs. curve","العمود المقاس مقابل المنحنى")}</div></div>
+  <div class="kpi"><div class="k">${tx("Flow deviation","انحراف التدفق")}</div><div class="v">${sgn(c.dFlow,1,"%")}</div><div class="h">${tx("Measured vs. curve","المقاس مقابل المنحنى")} (±${FAN.acc*100}%)</div></div></div>
+ <div class="note" style="margin-bottom:16px">${fverdict(c)}</div>
+ <div class="twocharts">
+  <div><h3 style="font-size:1rem;margin-bottom:4px">${tx("Pressure curve at actual speed and density","منحنى الضغط عند السرعة والكثافة الفعليتين")}</h3><div class="chart" dir="ltr">${curveP}</div></div>
+  <div><h3 style="font-size:1rem;margin-bottom:4px">${tx("Power curve at actual speed and density","منحنى القدرة عند السرعة والكثافة الفعليتين")}</h3><div class="chart" dir="ltr">${curveW}</div></div></div>
+ <div class="legend" style="margin:6px 0 16px"><span><span class="sw" style="background:var(--accent)"></span>${tx("Supplier curve, corrected","منحنى المورّد بعد التصحيح")}</span><span><span class="dot" style="background:var(--muted)"></span>${tx("Expected operating point","نقطة التشغيل المتوقعة")}</span><span><span class="dot" style="background:var(--${ek})"></span>${tx("Measured point, bar = flow accuracy","النقطة المقاسة، الخط = دقة قياس التدفق")}</span></div>
+ <div class="twocharts">
+  <div class="tablewrap"><table><thead><tr><th>${tx("Measured","المقاس")}</th><th class="n">${tx("Value","القيمة")}</th><th>${tx("Unit","الوحدة")}</th></tr></thead><tbody>${meas}</tbody></table></div>
+  <div class="tablewrap"><table><thead><tr><th>${tx("Calculated","المحسوب")}</th><th class="n">${tx("Value","القيمة")}</th><th>${tx("Unit","الوحدة")}</th></tr></thead><tbody>${calc.map(r=>`<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td><bdi dir="ltr">${r[2]}</bdi></td></tr>`).join("")}</tbody></table></div></div>
+ <p class="sub" style="margin-top:10px">${tx("η = Q·Δp ÷ P_shaft × (1 + dust ÷ ρ). The supplier curve is scaled to the actual speed and gas density by the fan laws.","η = Q·Δp ÷ قدرة العمود × (1 + الغبار ÷ الكثافة). منحنى المورّد يُعدَّل للسرعة وكثافة الغاز الفعليتين بقوانين المراوح.")}</p></div>`}
+function fForm(){const ed=FUI.form==="edit";const t=ed?FD.find(x=>x.id===FUI.test):null;const src=t?t.in:(fsorted().slice(-1)[0]||{in:{}}).in;
+ const vals=t?t.in:{dust:src.dust,o2:src.o2,co2:src.co2,h2o:src.h2o,prod:src.prod};
+ return `<div class="panel"><div class="ph"><div><span class="eyebrow">${ed?tx("Edit test","تعديل الاختبار"):tx("New test","اختبار جديد")}</span><h2>${tx(FAN.name[0],FAN.name[1])}</h2><p class="sub" style="max-width:72ch">${hintMulti()} ${tx("For a Prandtl traverse, enter the flow from each traverse point.","في مسح أنبوب برانتل أدخل تدفق كل نقطة من نقاط المسح.")}</p></div></div>
+ <form id="ff" novalidate><div class="formgrid"><label class="f" for="ff-date">${tx("Date","التاريخ")}<input type="date" id="ff-date" value="${t?t.date:NOW.toISOString().slice(0,10)}" dir="ltr"></label>
+  <label class="f" for="ff-op">${tx("Recorded by","سجّلها")}<input type="text" id="ff-op" value="${t&&t.op!==XLKEY?esc(t.op):""}" placeholder="${tx("e.g. Eng. Ali","مثال: م. علي")}"></label></div>
+ <div class="fgrid">${FFIELDS.map(([k,en,ar,u])=>`<div class="frow"><span>${tx(en,ar)}<small><bdi dir="ltr">${u}</bdi></small></span>${multi("f-"+k,vals[k],tx(en,ar))}</div>`).join("")}</div>
+ <div class="note" id="ff-live" style="margin-top:14px"></div>
+ <div class="row between" style="margin-top:14px"><span></span><div class="row"><button type="button" class="btn" id="fCancel">${tx("Cancel","إلغاء")}</button><button type="submit" class="btn primary">${tx("Save test","حفظ الاختبار")}</button></div></div>
+ <p id="ff-err" style="color:var(--bad);font-size:.85rem;margin:8px 0 0" hidden></p></form></div>`}
+function fRead(){let bad=false;const o={};FFIELDS.forEach(([k])=>{const r=readMulti("f-"+k);if(r.bad)bad=true;o[k]=r.v});return {in:o,bad}}
+function fLive(){const {in:o}=fRead();const c=fcalc({in:o});document.getElementById("ff-live").innerHTML=c?`${tx("Actual efficiency","الكفاءة الفعلية")} <b class="c-${ecls(c.dEff)}">${ISO(c.effA.toFixed(1)+"%")}</b> · ${tx("expected","المتوقعة")} <b>${c.effT!=null?ISO(c.effT.toFixed(1)+"%"):"—"}</b> · ${tx("deviation","الانحراف")} <b class="c-${ecls(c.dEff)}">${sgn(c.dEff,1)}</b>`:fverdict(null)}
+function bindFan(){const fe=document.getElementById("fEdit");if(fe)fe.addEventListener("click",()=>{FUI.form="edit";renderFan()});
+ const form=document.getElementById("ff");if(!form)return;form.addEventListener("input",fLive);bindAdd(form,fLive);fLive();
+ document.getElementById("fCancel").addEventListener("click",()=>{FUI.form=null;renderFan()});
+ form.addEventListener("submit",e=>{e.preventDefault();const err=document.getElementById("ff-err");const {in:o,bad}=fRead();const op=document.getElementById("ff-op").value.trim();const date=document.getElementById("ff-date").value;
+  const msg=!date?tx("Choose the date.","اختر التاريخ."):!op?tx("Enter who recorded the readings.","اكتب اسم من سجّل القراءات."):bad?tx("Some fields contain text instead of a number. Correct them or leave them empty.","بعض الخانات فيها نص بدل رقم. صحّحها أو اتركها فارغة."):!fcalc({in:o})?tx("Speed, both pressures, inlet temperature, flow and power are needed, and Δp must fall on the fan curve.","مطلوب: السرعة والضغطان وحرارة المدخل والتدفق والقدرة، ويجب أن يقع Δp ضمن منحنى المروحة."):"";
   if(msg){err.textContent=msg;err.hidden=false;return}
-  const [,mm,dd]=date.split("-").map(Number);
-  if(GUI.form==="edit"){Object.assign(GDATA[GUI.round],{v,op,m:mm,day:dd});}else{GDATA.push({id:"g"+Date.now(),m:mm,day:dd,op,xl:null,v});GUI.round=GDATA.length-1}
-  gsave();GUI.form=null;GUI.pt=null;renderGas();toast("Round saved")});
-}
+  if(FUI.form==="edit"){const t=FD.find(x=>x.id===FUI.test);Object.assign(t,{in:o,op,date,dayKnown:true})}else{const id="f"+Date.now();FD.push({id,date,dayKnown:true,op,in:o});FUI.test=id}
+  store.set(FKEY,FD);FUI.form=null;renderFan();toast(tx("Saved","تم الحفظ"))})}
 
-/* ===== HOME ===== */
-const DESC={
- "Kiln audit":"Periodic audit of kiln operating conditions and performance.",
- "Kiln shutdown inspection":"Inspection findings recorded during each kiln shutdown (KSD).",
- "Kiln shell scanner":"Kiln shell temperature profile from the shell scanner, to track coating and hot spots.",
- "Kiln EP dust drop test & kiln feed bin losses":"Dust drop-out at the kiln electrostatic precipitator and material losses at the kiln feed bin.",
- "P.H & kiln, cooler 1st level inspection":"Routine first-level inspection of the preheater, kiln and clinker cooler.",
- "P.H false air measurements":"False air ingress measured across the preheater stages.",
- "Burner audit":"Audit of burner operating parameters.",
- "Burner flame setting & inspection":"Burner flame setting checks and inspection results.",
- "Bypass % – flow measurement":"Bypass flow measurement and bypass percentage.",
- "Monitor volatiles input and output":"Input and output balance of volatiles through the kiln system.",
- "Clinker cooler fans flow measurements":"Measured air flow of each clinker cooler fan.",
- "Pyro line major fans audit":"Audit of the main fans on the pyro line.",
- "Critical sensor check":"Monthly cross check of 12 kiln-line sensors: field measurement against the CCR reading.",
- "Gas analyzers cross check":"Cross check of the five process gas analyzers (O₂, CO, NOx) against a portable analyzer.",
- "RM audit":"Raw mill audit.",
- "CM master plan activities":"Cement mill activities in the master plan.",
- "Bag filters measurements":"Measurements on the plant bag filters.",
- "Compressors":"Compressor performance and consumption records.",
- "Energy consumption":"Plant energy consumption tracking.",
- "RMs & kiln reports":"Periodic raw mill and kiln reports."};
-const LIVE={"Critical sensor check":"#sensors","Gas analyzers cross check":"#gas"};
-const slug=t=>t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-const ALL=[];PLAN.forEach(g=>g.items.forEach(it=>ALL.push({name:it,g:g.g,slug:slug(it)})));
-function liveStat(name){
- if(name==="Critical sensor check"){const ds=done();const l=ds[ds.length-1];if(!l)return {v:"—",c:"na",k:"No readings"};const s=summary(DATA[l].v);return {v:pct(s.acc),c:accCls(s.acc),k:"Accuracy · "+MS[l-1]}}
- if(name==="Gas analyzers cross check"){const gl=GDATA[GDATA.length-1];const gs=gsum(gl);return {v:pct(gs.rel,0),c:relCls(gs.rel),k:"Reliability · "+gLabel(gl)}}}
-function renderHome(){
- const hr=new Date().getHours();const greet=hr<12?"Good morning":hr<18?"Good afternoon":"Good evening";
- document.getElementById("app").innerHTML=`
- <section class="hero"><span class="eyebrow">${new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</span>
-  <h2>${greet}</h2><p>${ALL.length} activities in the 2026 Master Plan. Select one to see its details and readings.</p></section>
- <section class="agroup"><div class="sec-t"><h3>Active now</h3><span>${Object.keys(LIVE).length} activities with readings</span></div>
-  <div class="agrid">${Object.keys(LIVE).map(it=>{const st=liveStat(it);const a=ALL.find(x=>x.name===it);
-   return `<a class="at live" href="${LIVE[it]}"><span class="eyebrow">${a.g}</span><b style="font-size:1.05rem">${it}</b>
-    <span class="ft"><span>${st.k}</span><span class="v" style="color:var(--${st.c==="na"?"fg":st.c})">${st.v}</span></span></a>`}).join("")}</div></section>
- ${PLAN.map(g=>({g:g.g,items:g.items.filter(it=>!LIVE[it])})).filter(g=>g.items.length).map(g=>`<section class="agroup"><div class="sec-t"><h3>${g.g}</h3><span>${g.items.length} activities</span></div>
-  <div class="agrid">${g.items.map(it=>{const L=LIVE[it];const st=L?liveStat(it):null;
-   return `<a class="at ${L?"live":""}" href="${L||"#act-"+slug(it)}"><b>${it}</b>
-    <span class="ft">${L?`<span>${st.k}</span><span class="v" style="color:var(--${st.c==="na"?"fg":st.c})">${st.v}</span>`:`<span>Not set up yet</span><span aria-hidden="true">→</span>`}</span></a>`}).join("")}</div></section>`).join("")}`;
-}
-function renderAct(sl){
- const a=ALL.find(x=>x.slug===sl);if(!a){location.hash="";return}
- if(LIVE[a.name]){location.hash=LIVE[a.name].slice(1);return}
- document.getElementById("app").innerHTML=`
- <nav class="crumbs"><a href="#">← Home</a> / ${a.g} / <span style="color:var(--fg)">${a.name}</span></nav>
- <section class="panel">
-  <div class="ph"><div><span class="eyebrow">${a.g}</span><h2 style="font-size:1.6rem">${a.name}</h2><p class="sub" style="max-width:65ch">${DESC[a.name]||""}</p></div><span class="pill p-na">Not set up yet</span></div>
-  <div class="empty" style="border:1px dashed var(--line);border-radius:8px">
-   <h3>No readings for this activity yet</h3>
-   <p style="max-width:55ch;margin:0 auto">This activity is still kept in Excel. Once its sheet is added, it gets the same screens as the sensor and gas analyzer checks.</p></div>
- </section>
- <section class="panel"><div class="ph"><div><span class="eyebrow">What it will include</span><h2>Once the sheet is added</h2></div></div>
-  <div class="steps">
-   <div><b>Entry form</b>Record each round from any device on the plant network, with checks on every value.</div>
-   <div><b>Automatic calculations</b>The sheet's formulas run in the system, the same way every time.</div>
-   <div><b>History and trends</b>Every round kept in one place, with charts per item.</div>
-   <div><b>Findings</b>Repeated problems and suspicious entries flagged automatically.</div>
-  </div></section>
- <div><a class="btn" href="#">← Back to all activities</a></div>`;
-}
+/* =================== REPORTS =================== */
+let RUI=null;let DL=null;
+function reportData(kind,id){const gen=new Date().toLocaleDateString(L==="ar"?"ar-IQ-u-nu-latn":"en-GB",{day:"numeric",month:"long",year:"numeric"});
+ if(kind==="sensors"){const m=+id;const d=SD[m];if(!d||!d.v)return null;const s=ssum(d.v),x=ssum(d.v,true);const ST=SST();const a=actOf("#sensors");
+  const rows=POINTS.map((pt,i)=>{const [p,c]=d.v[i];const r=scalc(p,c);const k=r.ok?scls(r.err):"na";return {k,cells:[pName(pt),pt.id,pt.u,cellTxt(p),cellTxt(c),r.ok?raw(r.diff):"—",r.err==null?"—":(r.err*100).toFixed(1)+"%",ST[k]]}});
+  const notes=[];POINTS.forEach((pt,i)=>sflags(m,i).forEach(f=>notes.push(pt.id+": "+f)));
+  return {file:`critical-sensor-check-2026-${String(m).padStart(2,"0")}`,title:aName(a),period:smLabel(m),by:opName(d.op),gen,
+   kpis:[[tx("Accuracy","الدقة"),pct(s.acc),acls(s.acc)],[tx("In tolerance","ضمن الحد"),`${s.ok} / ${s.n}`,""],[tx("Need calibration","تحتاج معايرة"),String(s.bad),s.bad?"bad":""],[tx("Old Excel formula","معادلة الإكسل القديمة"),pct(x.acc),""]],
+   sections:[{h:tx("Readings","القراءات"),head:[tx("Sensor","الحساس"),tx("Code","الرمز"),tx("Unit","الوحدة"),tx("Field","الميدانية"),"CCR",tx("Diff.","الفرق"),tx("Error","الخطأ"),tx("Status","الحالة")],num:[3,4,5,6],rows}],
+   notes,foot:tx("Diff. = Field − CCR; Error = Diff. ÷ Field; tolerance ±2% (watch to ±5%). (×n) = average of n readings.","الفرق = الميدانية − غرفة التحكم؛ الخطأ = الفرق ÷ الميدانية؛ الحد ±2% (مراقبة حتى ±5%). (×n) = متوسط n قراءات.")}}
+ if(kind==="gas"){const r=GD[+id];if(!r)return null;const s=gsum(r);const ST=GST();const a=actOf("#gas");
+  const rows=GPOINTS.map((pt,i)=>{const [p,c]=r.v[i];const st=gstat(pt,p,c);return {k:st.k,cells:[gLoc(pt),pt.gas,pt.u,cellTxt(p,3),cellTxt(c,3),st.diff==null?"—":raw(st.diff,3),st.err==null?"—":(st.err*100).toFixed(0)+"%",gtolText(pt),ST[st.k]]}});
+  const notes=[];GPOINTS.forEach((pt,i)=>gflags(r,i).forEach(f=>notes.push(gpn(pt)+": "+f)));if(r.note)notes.unshift(Array.isArray(r.note)?tx(r.note[0],r.note[1]):r.note);
+  return {file:`gas-analyzers-${gYear(r)}-${String(r.m).padStart(2,"0")}${r.r2?"-2":""}`,title:aName(a),period:gLabelLong(r),by:opName(r.op),gen,
+   kpis:[[tx("Reliability","الموثوقية"),pct(s.rel,0),rcls(s.rel)],[tx("Within tolerance","ضمن الحد"),`${s.ok} / ${s.n}`,""],[tx("Out of tolerance","خارج الحد"),String(s.bad),s.bad?"bad":""],[tx("Not measured","غير مقاسة"),String(12-s.n),""]],
+   sections:[{h:tx("Readings","القراءات"),head:[tx("Location","الموقع"),tx("Gas","الغاز"),tx("Unit","الوحدة"),tx("Field","الميدانية"),"CCR",tx("Diff.","الفرق"),tx("Error","الخطأ"),tx("Tolerance","الحد"),tx("Status","الحالة")],num:[3,4,5,6],rows}],
+   notes,foot:tx("O₂ judged by absolute difference (±0.5 vol%); CO and NOx by ±10% with a 20 ppm floor. (×n) = average of n readings.","الأكسجين بالفرق المطلق (±0.5 vol%)؛ CO وNOx بنسبة ±10% مع حد أدنى 20 ppm. (×n) = متوسط n قراءات.")}}
+ if(kind==="fan"){const t=FD.find(x=>x.id===id);const c=t&&fcalc(t);if(!c)return null;const a=actOf("#fan");
+  return {file:`id-fan-efficiency-${t.date}`,title:aName(a)+" · "+tx(FAN.name[0],FAN.name[1]),period:fLabel(t),by:opName(t.op),gen,
+   kpis:[[tx("Actual efficiency","الكفاءة الفعلية"),c.effA.toFixed(1)+"%",ecls(c.dEff)],[tx("Expected (curve)","المتوقعة (المنحنى)"),c.effT.toFixed(1)+"%",""],[tx("Efficiency deviation","انحراف الكفاءة"),(c.dEff>0?"+":"")+c.dEff.toFixed(1)+" "+tx("pts","نقطة"),ecls(c.dEff)],[tx("Power deviation","انحراف القدرة"),(c.dPow>0?"+":"")+c.dPow.toFixed(1)+"%",powcls(c.dPow)]],
+   sections:[{h:tx("Measured values","القيم المقاسة"),head:[tx("Parameter","البند"),tx("Value","القيمة"),tx("Unit","الوحدة")],num:[1],rows:FFIELDS.map(([k,en,ar,u])=>({cells:[tx(en,ar),cellTxt(t.in[k],k==="q"||k==="prod"?0:2),u]}))},
+    {h:tx("Results","النتائج"),head:[tx("Parameter","البند"),tx("Value","القيمة"),tx("Unit","الوحدة")],num:[1],rows:[
+     [tx("Actual gas density","كثافة الغاز الفعلية"),raw(c.rho,4),"kg/m³"],[tx("Fan pressure rise Δp","ارتفاع ضغط المروحة Δp"),raw(c.dp,2),"mbar"],[tx("Shaft power (measured)","قدرة العمود (مقاسة)"),raw(c.shaft,1),"kW"],
+     [tx("Actual efficiency range","مدى الكفاءة الفعلية"),c.effMin.toFixed(0)+" – "+c.effMax.toFixed(0),"%"],[tx("Flow from curve at Δp","التدفق من المنحنى عند Δp"),raw(c.qth,0),"m³/h"],[tx("Shaft power from curve (with dust)","قدرة العمود من المنحنى (مع الغبار)"),raw(c.pthD,1),"kW"],
+     [tx("Flow deviation","انحراف التدفق"),(c.dFlow>0?"+":"")+c.dFlow.toFixed(1),"%"],[tx("Normalized flow","التدفق المعياري"),raw(c.qn,0),"Nm³/h"],[tx("Specific gas flow","التدفق النوعي"),raw(c.spec,3),"Nm³/kg cl"],[tx("Outlet temperature (estimated)","حرارة المخرج (تقديرية)"),raw(c.toutEst,1),"°C"]].map(r=>({cells:r}))}],
+   notes:[fverdict(c)],foot:tx(`η = Q·Δp ÷ P_shaft × (1 + dust ÷ ρ). Supplier curve (${FAN.nmax} rpm, ρ ${FAN.rhoRef} kg/m³) scaled by the fan laws. Flow by ${FAN.instr} ±${FAN.acc*100}%.`,`η = Q·Δp ÷ قدرة العمود × (1 + الغبار ÷ الكثافة). منحنى المورّد (${FAN.nmax} rpm، كثافة ${FAN.rhoRef} kg/m³) معدّل بقوانين المراوح. التدفق مقاس بـ ${FAN.instr} ±${FAN.acc*100}%.`)}}
+ return null}
+function paperHTML(r){const no="KCML-"+r.file.toUpperCase().replace(/[^A-Z0-9]+/g,"-").slice(0,40);
+ return `<div class="rh"><div><div class="org">KCML · ${tx("Process Engineering","هندسة العمليات")}</div><h1>${esc(r.title)}</h1></div><div class="doc">${tx("Master Plan 2026","الخطة الرئيسية 2026")}<br>${no}</div></div>
+ <div class="rmeta"><div><span>${tx("Period / date","الفترة / التاريخ")}</span><b>${esc(r.period)}</b></div><div><span>${tx("Recorded by","سجّلها")}</span><b>${esc(r.by)}</b></div><div><span>${tx("Report generated","تاريخ التقرير")}</span><b>${esc(r.gen)}</b></div><div><span>${tx("Status","الحالة")}</span><b>${tx("For review","للمراجعة")}</b></div></div>
+ <div class="rk">${r.kpis.map(k=>`<div><span>${k[0]}</span><b class="${k[2]||""}">${k[1]}</b></div>`).join("")}</div>
+ ${r.sections.map(s=>`<h2>${s.h}</h2><table><thead><tr>${s.head.map((h,i)=>`<th${s.num.includes(i)?' style="text-align:end"':""}>${h}</th>`).join("")}</tr></thead><tbody>${s.rows.map(row=>`<tr>${row.cells.map((v,i)=>`<td class="${s.num.includes(i)?"n":""} ${i===row.cells.length-1&&row.k?row.k:""}"><bdi>${esc(v)}</bdi></td>`).join("")}</tr>`).join("")}</tbody></table>`).join("")}
+ ${r.notes.length?`<h2>${tx("Observations","الملاحظات")}</h2><ul>${r.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`:""}
+ <p style="font-size:10.5px;color:#5a6876;margin-top:10px">${esc(r.foot)}</p>
+ <div class="sign"><div>${tx("Prepared by","أعدّه")}</div><div>${tx("Checked by","دقّقه")}</div><div>${tx("Approved by","اعتمده")}</div></div>
+ <div class="rf"><span>${tx("Generated by the Master Plan KCML system (demo)","صادر من نظام الخطة الرئيسية KCML (تجريبي)")}</span><span>${no}</span></div>`}
+function renderReport(){if(!RUI){location.hash="";return}const r=reportData(RUI.kind,RUI.id);if(!r){location.hash="";return}
+ const back={sensors:"#sensors",gas:"#gas",fan:"#fan"}[RUI.kind];
+ app().innerHTML=`<nav class="crumbs"><a href="#">${tx("Home","الرئيسية")}</a><span aria-hidden="true">/</span><a href="${back}">${esc(r.title)}</a><span aria-hidden="true">/</span><span style="color:var(--fg)">${tx("Report","التقرير")}</span></nav>
+ <div class="mtitle"><div><span class="eyebrow">${tx("Report preview","معاينة التقرير")}</span><h1>${esc(r.period)}</h1></div>
+  <div class="row">${DL?`<button class="btn primary" id="saveRep" type="button">${tx("Save for printing (HTML)","حفظ للطباعة (HTML)")}</button><button class="btn" id="saveCsv" type="button">${tx("Export to Excel (CSV)","تصدير إلى Excel (CSV)")}</button>`:""}<a class="btn" href="${back}">${tx("Back","رجوع")}</a></div></div>
+ ${DL?`<p class="sub">${tx("The saved file opens in your browser with the print dialog ready, A4 layout, with signature lines.","الملف المحفوظ يُفتح في المتصفح ونافذة الطباعة جاهزة، بمقاس A4 مع خانات التوقيع.")}</p>`:`<p class="sub">${tx("Saving files isn't available in this view. In the full system this page prints directly.","حفظ الملفات غير متاح في هذا العرض. في النظام الكامل تُطبع هذه الصفحة مباشرة.")}</p>`}
+ <div class="paperwrap"><div class="paper" dir="${L==="ar"?"rtl":"ltr"}">${paperHTML(r)}</div></div>`;
+ const sr=document.getElementById("saveRep");if(sr)sr.addEventListener("click",()=>doSave(r.file+".html",reportFile(r)));
+ const sc=document.getElementById("saveCsv");if(sc)sc.addEventListener("click",()=>doSave(r.file+".csv",reportCSV(r)))}
+function reportFile(r){const css=[...document.querySelectorAll("style")].map(s=>s.textContent).join("").match(/\.paper[^{]*\{[^}]*\}/g).join("\n");
+ return `<!doctype html><html lang="${L}" dir="${L==="ar"?"rtl":"ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(r.title)} · ${esc(r.period)}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>body{margin:0;background:#e9edf1;padding:24px}${css}\n@page{size:A4;margin:12mm}@media print{body{background:#fff;padding:0}.paper{box-shadow:none;max-width:none;min-width:0;padding:0}}</style></head>
+<body><div class="paper">${paperHTML(r)}</div><script>window.addEventListener("load",function(){setTimeout(function(){window.print()},400)})<\/script></body></html>`}
+function reportCSV(r){const clean=s=>String(s).replace(/[⁦-⁩]/g,"");const q=s=>{s=clean(s);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s};
+ const lines=[[r.title],[r.period],[tx("Recorded by","سجّلها"),r.by],[]];r.kpis.forEach(k=>lines.push([k[0],k[1]]));
+ r.sections.forEach(s=>{lines.push([]);lines.push([s.h]);lines.push(s.head);s.rows.forEach(row=>lines.push(row.cells))});
+ if(r.notes.length){lines.push([]);lines.push([tx("Observations","الملاحظات")]);r.notes.forEach(n=>lines.push([n]))}
+ return "﻿"+lines.map(l=>l.map(q).join(",")).join("\r\n")}
+async function doSave(filename,data){if(!DL)return;try{await DL.save({filename,data});toast(tx("File saved","تم حفظ الملف"))}catch(e){const c=e&&e.code;
+ if(c==="declined")return;toast(c==="rate_limited"?tx("Another save is still open. Try again in a moment.","هناك عملية حفظ مفتوحة. حاول بعد لحظة."):tx("Saving isn't available here.","الحفظ غير متاح هنا."));if(c==="unavailable"||c==="not_granted"){DL=null;route()}}}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-report]");if(!b)return;const [kind,id]=b.dataset.report.split(":");RUI={kind,id};if(location.hash==="#report")route();else location.hash="report"});
 
-/* ===== routing ===== */
-function route(){const h=location.hash;if(h==="#sensors")renderSensors();else if(h==="#gas")renderGas();else if(h.startsWith("#act-"))renderAct(h.slice(5));else renderHome()}
-window.addEventListener("hashchange",()=>{route();window.scrollTo({top:0})});
-let rArm=false;const rb=document.getElementById("resetBtn");rb.addEventListener("click",()=>{if(!rArm){rArm=true;rb.textContent="Click again to reset";setTimeout(()=>{rArm=false;rb.textContent="Reset demo data"},4000);return}
- rArm=false;rb.textContent="Reset demo data";DATA=JSON.parse(JSON.stringify(SEED));save();GDATA=JSON.parse(JSON.stringify(GSEED));gsave();GUI.round=null;GUI.pt=null;GUI.form=null;UI.month=null;UI.sensor=null;UI.edit=false;route();toast("Demo data restored")});
-let tt;function toast(t){const el=document.getElementById("toast");el.textContent=t;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,2200)}
-document.documentElement.lang="en";
-route();
+/* =================== shell =================== */
+function chrome(){document.getElementById("brandName").textContent=tx("Master Plan KCML","الخطة الرئيسية KCML");document.getElementById("brandSub").textContent=tx("Process engineering · 2026","هندسة العمليات · 2026");
+ document.getElementById("demoBadge").textContent=tx("Demo","تجريبي");document.getElementById("langBtn").textContent=L==="ar"?"English":"العربية";
+ const tb=document.getElementById("themeBtn");const dark=isDark();tb.innerHTML=dark?`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>`:`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>`;
+ tb.setAttribute("aria-label",dark?tx("Switch to light mode","التبديل إلى الوضع النهاري"):tx("Switch to dark mode","التبديل إلى الوضع الليلي"));tb.title=tb.getAttribute("aria-label");
+ document.getElementById("footNote").textContent=tx("Demo version: data is saved in this browser only. The full system runs on a server inside the plant network with one shared database for every device, user accounts and permissions.","نسخة تجريبية: البيانات محفوظة في هذا المتصفح فقط. النظام الكامل يعمل على سيرفر داخل شبكة المعمل بقاعدة بيانات واحدة مشتركة لكل الأجهزة، مع حسابات المستخدمين والصلاحيات.");
+ document.getElementById("resetBtn").textContent=tx("Reset demo data","إعادة البيانات التجريبية");document.title=tx("Master Plan KCML","الخطة الرئيسية KCML")}
+function route(){chrome();const h=location.hash;
+ if(h==="#sensors")renderSensors();else if(h==="#gas")renderGas();else if(h==="#fan")renderFan();else if(h==="#report")renderReport();else if(h.startsWith("#act-"))renderAct(h.slice(5));else renderHome()}
+window.addEventListener("hashchange",()=>{SUI.edit=false;GUI.form=null;FUI.form=null;route();window.scrollTo({top:0})});
+document.getElementById("langBtn").addEventListener("click",()=>{L=L==="ar"?"en":"ar";store.set("kcml-lang",L);applyPrefs();route()});
+document.getElementById("themeBtn").addEventListener("click",()=>{THEME=isDark()?"light":"dark";store.set("kcml-theme",THEME);applyPrefs();chrome()});
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>chrome());
+let rArm=false;const rb=document.getElementById("resetBtn");rb.addEventListener("click",()=>{if(!rArm){rArm=true;rb.textContent=tx("Click again to reset","اضغط مرة أخرى للتأكيد");setTimeout(()=>{rArm=false;chrome()},4000);return}
+ rArm=false;SD=JSON.parse(JSON.stringify(SSEED));GD=JSON.parse(JSON.stringify(GSEED));FD=JSON.parse(JSON.stringify(FSEED));store.set(SKEY,SD);store.set(GKEY,GD);store.set(FKEY,FD);
+ Object.assign(SUI,{month:null,sensor:null,edit:false});Object.assign(GUI,{round:null,pt:null,form:null});Object.assign(FUI,{test:null,form:null});route();toast(tx("Demo data restored","أُعيدت البيانات التجريبية"))});
+applyPrefs();route();
+if(window.claude&&window.claude.use){window.claude.use("downloads").then(d=>{DL=d;if(d&&location.hash==="#report")route()}).catch(()=>{})}
 </script>
 
 </body></html>
